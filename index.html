@@ -1,0 +1,1206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Spyre Main Beach · Kollosche × Place Brisbane</title>
+<!--
+  DEPLOYMENT NOTE
+  This standalone build uses 'Söhne Breit' as the primary display family.
+  Keep your existing <link rel="stylesheet" href="css/fonts.css"> and the /fonts/ woff2 files
+  in place when dropping this into spyre-submission/ and Söhne Breit will load automatically.
+  'Archivo' is loaded below only as a preview fallback so the layout renders before the brand
+  fonts are wired.
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#0b152c;
+    --dark:#13203c;
+    --mid:#233356;
+    --accent:#6a89af;
+    --gold:#c9a96e;
+    --light:#dddcd9;
+    --light-dim:rgba(221,220,217,.62);
+    --line:rgba(221,220,217,.12);
+    --line-strong:rgba(201,169,110,.5);
+    --display:'Söhne Breit','Archivo',system-ui,sans-serif;
+    --body:'Inter',system-ui,-apple-system,sans-serif;
+    --maxw:1180px;
+    --ease:cubic-bezier(.22,.61,.36,1);
+  }
+
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+
+  body{
+    background:var(--navy);
+    color:var(--light);
+    font-family:var(--body);
+    font-size:16px;
+    line-height:1.65;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+
+  ::selection{background:var(--gold);color:var(--navy)}
+
+  /* ---------- Typography ---------- */
+  .eyebrow{
+    font-family:var(--display);
+    font-size:.72rem;
+    font-weight:600;
+    letter-spacing:.32em;
+    text-transform:uppercase;
+    color:var(--gold);
+  }
+  h1,h2,h3{font-family:var(--display);font-weight:600;line-height:1.08;letter-spacing:-.01em}
+  h2{font-size:clamp(1.9rem,4vw,3rem)}
+  h3{font-size:clamp(1.15rem,2vw,1.4rem);letter-spacing:0}
+  p{color:var(--light-dim);max-width:62ch}
+  strong{color:var(--light);font-weight:600}
+  .lede{font-size:clamp(1.05rem,1.6vw,1.25rem);color:var(--light);max-width:56ch}
+
+  /* ---------- Header ---------- */
+  .topbar{
+    position:fixed;top:0;left:0;right:0;z-index:60;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:20px clamp(20px,5vw,56px);
+    background:linear-gradient(to bottom,rgba(11,21,44,.92),rgba(11,21,44,0));
+    backdrop-filter:blur(6px);
+    transition:background .4s var(--ease);
+  }
+  .topbar.solid{background:rgba(11,21,44,.96);border-bottom:1px solid var(--line)}
+  .wordmark{font-family:var(--display);font-size:.82rem;letter-spacing:.18em;text-transform:uppercase;color:var(--light);font-weight:600}
+  .wordmark span{color:var(--gold)}
+  .menu-btn{
+    font-family:var(--display);font-size:.72rem;letter-spacing:.24em;text-transform:uppercase;
+    color:var(--light);background:none;border:1px solid var(--line);
+    padding:10px 18px;cursor:pointer;transition:all .3s var(--ease);
+  }
+  .menu-btn:hover,.menu-btn:focus-visible{border-color:var(--gold);color:var(--gold);outline:none}
+
+  .progress{position:fixed;top:0;left:0;height:2px;width:0;background:var(--gold);z-index:70;transition:width .1s linear}
+
+  /* ---------- Sub nav (anchor menu) ---------- */
+  .subnav{position:fixed;top:72px;left:0;right:0;z-index:59;
+    background:rgba(11,21,44,.97);border-bottom:1px solid var(--line);backdrop-filter:blur(8px)}
+  .subnav-track{position:relative;display:flex;gap:0;overflow-x:auto;scrollbar-width:none;
+    -ms-overflow-style:none;padding:0 clamp(12px,4vw,44px);scroll-behavior:smooth}
+  .subnav-track::-webkit-scrollbar{display:none}
+  .subnav-chip{flex:none;display:inline-flex;align-items:baseline;gap:7px;
+    padding:12px 15px;text-decoration:none;white-space:nowrap;
+    border-bottom:2px solid transparent;transition:border-color .25s var(--ease)}
+  .subnav-chip .cn{font-family:var(--display);font-size:.62rem;color:var(--accent);letter-spacing:.08em;transition:color .25s var(--ease)}
+  .subnav-chip .cl{font-family:var(--display);font-size:.73rem;letter-spacing:.09em;text-transform:uppercase;color:var(--light-dim);transition:color .25s var(--ease)}
+  .subnav-chip:hover .cl,.subnav-chip:focus-visible .cl{color:var(--light)}
+  .subnav-chip:hover .cn,.subnav-chip:focus-visible .cn{color:var(--gold)}
+  .subnav-chip:focus-visible{outline:none;border-color:var(--line-strong)}
+  .subnav-chip.active{border-color:var(--gold)}
+  .subnav-chip.active .cl,.subnav-chip.active .cn{color:var(--gold)}
+  section[id]{scroll-margin-top:var(--anchor-offset,120px)}
+
+  /* ---------- Nav overlay ---------- */
+  .nav-overlay{
+    position:fixed;inset:0;z-index:80;background:var(--navy);
+    padding:clamp(80px,10vh,120px) clamp(24px,6vw,80px) 60px;
+    opacity:0;visibility:hidden;transition:opacity .45s var(--ease),visibility .45s;
+    overflow-y:auto;
+  }
+  .nav-overlay.open{opacity:1;visibility:visible}
+  .nav-close{position:absolute;top:22px;right:clamp(20px,5vw,56px);font-family:var(--display);
+    font-size:.72rem;letter-spacing:.24em;text-transform:uppercase;color:var(--light);
+    background:none;border:1px solid var(--line);padding:10px 18px;cursor:pointer;transition:all .3s var(--ease)}
+  .nav-close:hover,.nav-close:focus-visible{border-color:var(--gold);color:var(--gold);outline:none}
+  .nav-grid{max-width:var(--maxw);margin:0 auto;
+    display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:2px 44px}
+  .nav-link{display:flex;gap:16px;align-items:baseline;padding:13px 0;border-bottom:1px solid var(--line);
+    color:var(--light);text-decoration:none;transition:color .25s var(--ease)}
+  .nav-link:hover,.nav-link:focus-visible{color:var(--gold);outline:none}
+  .nav-num{font-family:var(--display);font-size:.72rem;color:var(--accent);letter-spacing:.1em;min-width:26px}
+  .nav-txt{font-family:var(--display);font-size:.98rem;letter-spacing:.01em}
+
+  /* ---------- Section shell ---------- */
+  section{padding:clamp(72px,11vh,128px) clamp(20px,5vw,56px);position:relative}
+  .wrap{max-width:var(--maxw);margin:0 auto}
+  .sec-index{font-family:var(--display);font-size:.72rem;letter-spacing:.28em;color:var(--accent);margin-bottom:18px}
+  .sec-head{max-width:70ch;margin-bottom:clamp(32px,5vh,56px)}
+  .sec-head h2{margin-top:12px}
+  .sec-head .lede{margin-top:22px}
+
+  .band{border-top:1px solid var(--line)}
+  .fill-dark{background:var(--dark)}
+  .fill-navy{background:var(--navy)}
+
+  /* reveal */
+  .reveal{opacity:0;transform:translateY(24px);transition:opacity .8s var(--ease),transform .8s var(--ease)}
+  .reveal.in{opacity:1;transform:none}
+  @media (prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}}
+
+  /* ---------- Hero ---------- */
+  .hero{position:relative;min-height:100vh;display:flex;flex-direction:column;justify-content:center;
+    padding-top:120px;overflow:hidden;background:var(--navy)}
+  .hero::before{content:"";position:absolute;inset:0;z-index:0;
+    background:url("images/header.jpg") 52% 32%/cover no-repeat}
+  .hero::after{content:"";position:absolute;inset:0;z-index:1;
+    background:
+      linear-gradient(90deg,rgba(11,21,44,.94) 0%,rgba(11,21,44,.74) 38%,rgba(11,21,44,.34) 72%,rgba(11,21,44,.12) 100%),
+      linear-gradient(0deg,rgba(11,21,44,.96) 0%,rgba(11,21,44,.30) 42%,transparent 70%),
+      radial-gradient(120% 90% at 82% 6%,rgba(35,51,86,.4),transparent 55%)}
+  .hero>.wrap,.hero>.scrollcue{position:relative;z-index:2}
+  @media(max-width:720px){
+    .hero::before{background-position:60% 32%}
+    .hero::after{background:
+      linear-gradient(0deg,rgba(11,21,44,.96) 0%,rgba(11,21,44,.62) 48%,rgba(11,21,44,.28) 100%)}
+  }
+  .hero-eyebrow{margin-bottom:34px}
+  .hero h1{font-size:clamp(2.8rem,9vw,7.2rem);line-height:.96;letter-spacing:-.02em}
+  .hero h1 .thin{color:var(--light-dim)}
+  .hero-sub{font-family:var(--display);font-size:clamp(1rem,2.4vw,1.6rem);color:var(--gold);
+    margin-top:26px;letter-spacing:.02em}
+  .hero-thesis{margin-top:34px;font-size:clamp(1rem,1.5vw,1.18rem);color:var(--light);max-width:52ch;line-height:1.55}
+  .hero-stats{display:flex;flex-wrap:wrap;gap:clamp(28px,5vw,64px);margin-top:56px;padding-top:34px;border-top:1px solid var(--line)}
+  .stat .n{font-family:var(--display);font-size:clamp(1.6rem,3vw,2.4rem);color:var(--light)}
+  .stat .l{font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);margin-top:6px}
+  .scrollcue{position:absolute;bottom:30px;left:50%;transform:translateX(-50%);
+    font-family:var(--display);font-size:.66rem;letter-spacing:.3em;text-transform:uppercase;color:var(--light-dim)}
+  .scrollcue::after{content:"";display:block;width:1px;height:34px;background:var(--gold);margin:12px auto 0;
+    animation:cue 2.4s var(--ease) infinite}
+  @keyframes cue{0%,100%{opacity:.3;transform:scaleY(.6)}50%{opacity:1;transform:scaleY(1)}}
+
+  /* ---------- Full-bleed location band ---------- */
+  .fullbleed{position:relative;padding:0;min-height:clamp(440px,74vh,700px);
+    display:flex;align-items:flex-end;overflow:hidden;border-top:1px solid var(--line)}
+  .fullbleed .fb-img{position:absolute;inset:0;background-size:cover;background-position:center 56%;
+    transform:scale(1.04)}
+  .fullbleed .fb-scrim{position:absolute;inset:0;
+    background:
+      linear-gradient(0deg,rgba(11,21,44,.96) 0%,rgba(11,21,44,.42) 46%,rgba(11,21,44,.10) 100%),
+      linear-gradient(90deg,rgba(11,21,44,.78) 0%,rgba(11,21,44,.15) 52%,transparent 78%)}
+  .fullbleed .fb-content{position:relative;z-index:2;width:100%;max-width:var(--maxw);margin:0 auto;
+    padding:clamp(40px,8vh,92px) clamp(20px,5vw,56px)}
+  .fullbleed .fb-content h2{margin-top:12px;max-width:16ch}
+  .fullbleed .fb-content p{margin-top:20px;color:var(--light);max-width:54ch}
+
+  /* ---------- Two-tower split motif ---------- */
+  .split{display:grid;grid-template-columns:1fr 1fr;gap:2px;border:1px solid var(--line);margin-top:8px}
+  .split .col{background:var(--dark);padding:clamp(26px,4vw,40px)}
+  .split .col.east{background:linear-gradient(180deg,rgba(201,169,110,.08),transparent),var(--dark)}
+  .col .tower-tag{font-family:var(--display);font-size:.72rem;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);margin-bottom:8px}
+  .col h3{margin-bottom:14px}
+  .col .role{font-size:.8rem;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:18px}
+  .col ul{list-style:none;margin-top:14px}
+  .col ul li{position:relative;padding-left:20px;margin-bottom:9px;color:var(--light-dim);font-size:.95rem}
+  .col ul li::before{content:"";position:absolute;left:0;top:.62em;width:7px;height:1px;background:var(--gold)}
+  @media(max-width:720px){.split{grid-template-columns:1fr}}
+
+  /* ---------- Cards / recs ---------- */
+  .rec-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:2px;border:1px solid var(--line)}
+  .rec{background:var(--dark);padding:clamp(24px,3vw,34px);display:flex;flex-direction:column;min-height:210px}
+  .rec .kicker{font-family:var(--display);font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);margin-bottom:14px}
+  .rec h3{margin-bottom:12px;font-size:1.12rem}
+  .rec p{font-size:.92rem;margin-bottom:auto}
+  .plan-btn{margin-top:22px;align-self:flex-start;display:inline-flex;align-items:center;gap:10px;
+    font-family:var(--display);font-size:.68rem;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);
+    background:none;border:1px solid var(--line-strong);padding:9px 15px;cursor:pointer;transition:all .3s var(--ease)}
+  .plan-btn:hover,.plan-btn:focus-visible{background:var(--gold);color:var(--navy);outline:none}
+  .plan-btn svg{width:13px;height:13px}
+
+  /* ---------- Data / pricing ---------- */
+  .metric-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:2px;border:1px solid var(--line);margin-top:8px}
+  .metric{background:var(--dark);padding:clamp(22px,3vw,30px)}
+  .metric .n{font-family:var(--display);font-size:clamp(1.5rem,3vw,2.1rem);color:var(--gold)}
+  .metric .l{font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-top:8px}
+  .metric .sub{font-size:.78rem;color:var(--light-dim);margin-top:4px}
+
+  .band-viz{margin-top:36px;border:1px solid var(--line);padding:clamp(22px,3vw,32px);background:var(--dark)}
+  .band-viz .scale{display:flex;justify-content:space-between;font-family:var(--display);font-size:.74rem;color:var(--accent);letter-spacing:.06em;margin-bottom:12px}
+  .band-track{height:12px;border-radius:2px;background:linear-gradient(90deg,var(--mid),var(--accent) 45%,var(--gold));position:relative}
+  .band-track .avg{position:absolute;top:-6px;bottom:-6px;left:50%;width:2px;background:var(--light)}
+  .band-note{display:flex;justify-content:space-between;margin-top:12px;font-size:.78rem;color:var(--light-dim)}
+
+  table.data{width:100%;border-collapse:collapse;margin-top:8px;font-size:.9rem}
+  table.data th,table.data td{text-align:left;padding:13px 16px;border-bottom:1px solid var(--line)}
+  table.data th{font-family:var(--display);font-size:.68rem;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);font-weight:600}
+  table.data td{color:var(--light-dim)}
+  table.data td:first-child{color:var(--light)}
+  table.data tr:hover td{background:rgba(35,51,86,.28)}
+
+  /* ---------- Process steps ---------- */
+  .steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:2px;border:1px solid var(--line);margin-top:8px;counter-reset:s}
+  .step{background:var(--dark);padding:clamp(24px,3vw,32px);position:relative;counter-increment:s}
+  .step::before{content:counter(s,decimal-leading-zero);font-family:var(--display);font-size:.8rem;color:var(--gold);letter-spacing:.1em}
+  .step h3{font-size:1.02rem;margin:14px 0 8px}
+  .step p{font-size:.88rem}
+
+  /* ---------- Simple list blocks ---------- */
+  .block-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:2px;border:1px solid var(--line);margin-top:8px}
+  .blk{background:var(--dark);padding:clamp(24px,3vw,32px)}
+  .blk h3{font-size:1.05rem;margin-bottom:10px}
+  .blk p{font-size:.9rem}
+  .blk .tag{font-family:var(--display);font-size:.68rem;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);margin-bottom:12px;display:block}
+
+  /* risk two-col */
+  .risk{border:1px solid var(--line);margin-top:8px}
+  .risk-row{display:grid;grid-template-columns:1fr 1.4fr;gap:2px}
+  .risk-row>div{background:var(--dark);padding:clamp(20px,2.6vw,28px)}
+  .risk-row .r-issue{color:var(--light);font-family:var(--display);font-size:1rem;letter-spacing:0}
+  .risk-row .r-issue span{display:block;font-family:var(--body);font-size:.68rem;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);margin-bottom:8px}
+  .risk-row .r-ans{color:var(--light-dim);font-size:.92rem}
+  @media(max-width:640px){.risk-row{grid-template-columns:1fr}}
+
+  /* team / agent network */
+  .agents{display:grid;grid-template-columns:1fr 1fr;gap:2px;border:1px solid var(--line);margin-top:8px}
+  @media(max-width:820px){.agents{grid-template-columns:1fr}}
+  .agent-card{background:var(--dark);padding:clamp(26px,3.4vw,42px);display:flex;flex-direction:column}
+  .agent-card.master{grid-column:1 / -1;display:grid;grid-template-columns:minmax(230px,290px) 1fr;gap:clamp(24px,4vw,56px)}
+  @media(max-width:820px){.agent-card.master{grid-template-columns:1fr;gap:26px}}
+  .agent-id{display:flex;gap:20px;align-items:flex-start}
+  .master-id{flex-direction:column;gap:20px}
+  .agent-photo{width:74px;height:74px;border-radius:50%;flex:none;background:var(--mid);
+    border:1px solid var(--accent);display:flex;align-items:center;justify-content:center;
+    font-family:var(--display);color:var(--light);font-size:1.1rem;letter-spacing:.02em}
+  .agent-role{font-family:var(--display);font-size:.7rem;letter-spacing:.19em;text-transform:uppercase;color:var(--accent);margin-bottom:9px;line-height:1.4}
+  .agent-name{font-family:var(--display);font-size:clamp(1.25rem,2.3vw,1.6rem);color:var(--light);line-height:1.05;letter-spacing:-.01em}
+  .agent-org{font-size:.92rem;color:var(--light-dim);margin-top:7px}
+  .agent-desc{margin-top:22px;flex:1}
+  .master .agent-desc{margin-top:0}
+  .agent-desc p{color:var(--light-dim);font-size:.98rem;max-width:74ch}
+  .agent-desc p + p{margin-top:14px}
+  .agent-focus{margin-top:24px;padding-top:20px;border-top:1px solid var(--line)}
+  .agent-focus .fh{font-family:var(--display);font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;color:var(--light-dim);margin-bottom:11px}
+  .agent-focus .fl{font-size:.93rem;color:var(--light);line-height:1.7}
+
+  /* case studies */
+  .cases{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:2px;border:1px solid var(--line);margin-top:8px}
+  .case{background:var(--dark);padding:clamp(24px,3vw,32px)}
+  .case.key{background:linear-gradient(180deg,rgba(201,169,110,.1),transparent),var(--dark)}
+  .case .cn{font-family:var(--display);font-size:1.2rem;margin-bottom:8px}
+  .case .badge{font-family:var(--display);font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);border:1px solid var(--line-strong);padding:3px 9px;display:inline-block;margin-bottom:14px}
+  .case p{font-size:.88rem}
+
+  /* placeholder chip */
+  .tbc{display:inline-block;font-family:var(--display);font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--gold);border:1px dashed var(--line-strong);padding:3px 10px;margin-top:14px;border-radius:2px}
+
+  /* ---------- Core message ---------- */
+  .core{background:radial-gradient(120% 100% at 50% 0%,rgba(35,51,86,.5),transparent 60%),var(--navy);text-align:center}
+  .core .wrap{max-width:900px}
+  .core blockquote{font-family:var(--display);font-size:clamp(1.7rem,4.4vw,3.2rem);line-height:1.14;letter-spacing:-.01em;color:var(--light)}
+  .core blockquote em{color:var(--gold);font-style:normal}
+
+  footer{padding:48px clamp(20px,5vw,56px);border-top:1px solid var(--line);text-align:center}
+  footer .wm{font-family:var(--display);letter-spacing:.16em;text-transform:uppercase;font-size:.74rem;color:var(--light-dim)}
+  footer .wm span{color:var(--gold)}
+  footer .conf{font-size:.68rem;color:var(--light-dim);margin-top:14px;letter-spacing:.04em}
+
+  /* ---------- Plan modal ---------- */
+  .modal{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;
+    padding:24px;background:rgba(4,9,20,.86);backdrop-filter:blur(4px);
+    opacity:0;visibility:hidden;transition:opacity .35s var(--ease),visibility .35s}
+  .modal.open{opacity:1;visibility:visible}
+  .modal-card{background:var(--dark);border:1px solid var(--line-strong);max-width:820px;width:100%;
+    max-height:88vh;overflow:auto;transform:translateY(16px);transition:transform .35s var(--ease)}
+  .modal.open .modal-card{transform:none}
+  .modal-head{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;
+    padding:24px 28px;border-bottom:1px solid var(--line)}
+  .modal-head .m-eyebrow{font-family:var(--display);font-size:.66rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold)}
+  .modal-head h3{margin-top:8px;font-size:1.25rem}
+  .modal-x{background:none;border:1px solid var(--line);color:var(--light);width:38px;height:38px;flex:none;
+    cursor:pointer;font-size:1.1rem;transition:all .3s var(--ease)}
+  .modal-x:hover,.modal-x:focus-visible{border-color:var(--gold);color:var(--gold);outline:none}
+  .modal-body{padding:24px 28px}
+  .plan-figure{background:var(--navy);border:1px solid var(--line);padding:20px;border-radius:3px}
+  .plan-figure svg{width:100%;height:auto;display:block}
+  .modal-note{margin-top:18px;font-size:.9rem;color:var(--light-dim)}
+  .modal-note strong{color:var(--gold);font-weight:600}
+
+  /* ---------- Team section: no gold (white / light blue only) ---------- */
+  #s16 .eyebrow{color:var(--light)}
+  #s16 .tbc{color:var(--accent);border-color:rgba(106,137,175,.5)}
+
+  /* ---------- Responsive ---------- */
+  @media(max-width:640px){
+    body{font-size:15px}
+    .hero-stats{gap:24px}
+    .nav-grid{grid-template-columns:1fr}
+  }
+
+  /* ---------- Plans & documents panel ---------- */
+  .doc-panel{border:1px solid var(--line);margin-top:44px;background:var(--dark)}
+  .dp-head{display:flex;justify-content:space-between;align-items:baseline;gap:16px;
+    padding:20px clamp(20px,3vw,28px);border-bottom:1px solid var(--line)}
+  .dp-note{font-family:var(--display);font-size:.68rem;letter-spacing:.16em;text-transform:uppercase;color:var(--accent)}
+  .doc-link{display:flex;align-items:center;gap:18px;text-decoration:none;
+    padding:18px clamp(20px,3vw,28px);border-bottom:1px solid var(--line);transition:background .25s var(--ease)}
+  .doc-link:last-child{border-bottom:none}
+  .doc-link:hover,.doc-link:focus-visible{background:rgba(35,51,86,.32);outline:none}
+  .doc-ico{width:42px;height:42px;flex:none;border:1px solid var(--line-strong);color:var(--gold);
+    display:flex;align-items:center;justify-content:center;transition:all .25s var(--ease)}
+  .doc-link:hover .doc-ico{background:var(--gold);color:var(--navy)}
+  .doc-meta{flex:1;min-width:0}
+  .doc-meta .dt{display:block;font-family:var(--display);color:var(--light);font-size:1.02rem;letter-spacing:.01em;transition:color .25s var(--ease)}
+  .doc-meta .ds{display:block;font-size:.8rem;color:var(--light-dim);margin-top:3px}
+  .doc-link:hover .dt{color:var(--gold)}
+  .doc-link .arw{color:var(--accent);flex:none;transition:color .25s var(--ease)}
+  .doc-link:hover .arw{color:var(--gold)}
+  /* ---------- Team headshots ---------- */
+  .agent-photo{overflow:hidden;padding:0;background:var(--mid)}
+  .agent-photo img{width:100%;height:100%;object-fit:cover;object-position:50% 18%;display:block}
+  .agent-card.master .agent-photo{width:118px;height:118px}
+</style>
+</head>
+<body>
+
+<div class="progress" id="progress"></div>
+
+<header class="topbar" id="topbar">
+  <div class="wordmark">Kollosche <span>×</span> Place</div>
+  <button class="menu-btn" id="menuBtn" aria-haspopup="true" aria-controls="navOverlay">Index</button>
+</header>
+
+<!-- ANCHOR MENU -->
+<nav class="subnav" id="subnav" aria-label="Section navigation">
+  <div class="subnav-track" id="subnavTrack"></div>
+</nav>
+
+<!-- NAV OVERLAY -->
+<nav class="nav-overlay" id="navOverlay" aria-label="Section index">
+  <button class="nav-close" id="navClose">Close</button>
+  <div class="nav-grid" id="navGrid"></div>
+</nav>
+
+<!-- 1. HERO -->
+<section class="hero" id="s1">
+  <div class="wrap">
+    <div class="eyebrow hero-eyebrow">Kollosche × Place Brisbane</div>
+    <h1>Spyre<br><span class="thin">Main Beach</span></h1>
+    <div class="hero-sub">Strategic Sales, Product &amp; Commercial Review</div>
+    <p class="hero-thesis">Two towers, one objective: not how many apartments can be built, but how much long-term value can be created. This review shows where.</p>
+    <div class="hero-stats">
+      <div class="stat"><div class="n">~308</div><div class="l">Residences</div></div>
+      <div class="stat"><div class="n">Two</div><div class="l">Towers</div></div>
+      <div class="stat"><div class="n">44,988 m²</div><div class="l">Net saleable</div></div>
+      <div class="stat"><div class="n">~$900M</div><div class="l">Target gross realisation</div></div>
+    </div>
+  </div>
+  <div class="scrollcue">Scroll</div>
+</section>
+
+<section class="band fill-dark" id="s2">
+  <div class="wrap reveal">
+    <div class="sec-index">02 / The Opportunity</div>
+    <div class="sec-head">
+      <div class="eyebrow">Executive Summary</div>
+      <h2>Value, not volume.</h2>
+      <p class="lede">Spyre has all the foundations required to become one of Main Beach's defining residential developments. The upside now lies in refining the product before launch.</p>
+    </div>
+    <p>This submission has been prepared following a comprehensive review of the proposed development, including the concept plans, apartment configurations, pricing assumptions and supporting project information. Our objective extends beyond providing a project marketing proposal. We have approached this opportunity as a strategic development partner, identifying opportunities to further strengthen the product before launch to maximise buyer appeal, livability, pricing integrity and overall gross realisation.</p>
+    <p style="margin-top:18px">Capitalising on protected views east to the beach and north up the Broadwater, Spyre's architectural presence, scale and timing within an evolving luxury market provide an exceptional platform for success. We also believe there are several opportunities to further refine the product, ensuring the development aligns with the evolving expectations of today's apartment buyer while targeting the strongest areas of owner-occupier demand.</p>
+    <div class="metric-row" style="margin-top:32px">
+      <div class="metric"><div class="n">40%</div><div class="l">Pre-sale target</div><div class="sub">Trigger for funding</div></div>
+      <div class="metric"><div class="n">July 2027</div><div class="l">By this date</div><div class="sub">Program-critical</div></div>
+      <div class="metric"><div class="n">Contracts</div><div class="l">The real metric</div><div class="sub">Not enquiry, not EOI</div></div>
+    </div>
+    <div class="metric-row" style="margin-top:2px">
+      <div class="metric"><div class="n">Desirability</div><div class="l">The real lever</div><div class="sub">Not apartment count</div></div>
+      <div class="metric"><div class="n">Scarcity</div><div class="l">Protects pricing</div><div class="sub">Controlled release</div></div>
+      <div class="metric"><div class="n">Yield</div><div class="l">The outcome</div><div class="sub">Higher rates per m²</div></div>
+    </div>
+    <div class="split" style="margin-top:36px">
+      <div class="col east"><div class="tower-tag">Guiding principles</div><h3>Four tests for every recommendation.</h3>
+        <ul><li>Maximise achievable gross realisation</li><li>Improve buyer desirability</li><li>Protect pricing integrity</li><li>Support the successful delivery of the required pre-sales program</li></ul></div>
+      <div class="col"><div class="tower-tag">Our philosophy</div><h3>Design for the buyer, not the floor plate.</h3>
+        <p style="margin-top:6px">Rather than focusing solely on apartment numbers or optimistic pricing assumptions, our recommendations seek to maximise long-term project value by creating a product buyers genuinely aspire to own. Every recommendation is built from the future purchaser's perspective rather than project efficiency.</p></div>
+    </div>
+    <h3 style="margin:44px 0 6px">Primary areas of opportunity</h3>
+    <div class="block-grid" style="margin-top:14px">
+      <div class="blk"><span class="tag">One</span><h3>Wellness &amp; lifestyle amenity</h3><p>Enhancement of resident wellness and lifestyle amenity in the East Tower.</p></div><div class="blk"><span class="tag">Two</span><h3>Parking &amp; resident services</h3><p>Improved parking ratios and resident services across both towers.</p></div><div class="blk"><span class="tag">Three</span><h3>Layouts for owner-occupiers</h3><p>Refinement of apartment layouts to better suit owner-occupier demand across both towers.</p></div><div class="blk"><span class="tag">Four</span><h3>Premium hierarchy in Tower 2</h3><p>Creation of a premium product hierarchy within Tower 2 to maximise value on all apartments that clear the top of the East Tower.</p></div><div class="blk"><span class="tag">Five</span><h3>Pricing &amp; release discipline</h3><p>Disciplined pricing architecture and controlled inventory releases.</p></div><div class="blk"><span class="tag">Six</span><h3>Combined buyer relationships</h3><p>Leveraging the combined buyer relationships of Kollosche and Place to accelerate the sales program.</p></div>
+    </div>
+    <div class="split" style="margin-top:36px">
+      <div class="col east"><div class="tower-tag">Understanding Spyre's vision</div><h3>Beyond another premium development.</h3>
+        <p style="margin-top:6px">The opportunity is to create a landmark residential address that contributes to the ongoing evolution of Main Beach while establishing a new benchmark for luxury apartment living on the Gold Coast. Projects of this calibre are ultimately judged not by the number of apartments they contain, but by the functionality of design, the quality of lifestyle they create, the strength of buyer demand they generate, and the legacy they leave within the market.</p></div>
+      <div class="col"><div class="tower-tag">Creating legacy</div><h3>The developments that shape a city are rarely those that maximise apartment numbers.</h3>
+        <p style="margin-top:6px">They are the projects that redefine buyer expectations, elevate their surrounding precinct, and become recognised as benchmark developments for years to come. The greatest opportunity lies not in increasing density, but in creating a product that consistently commands premium pricing because of its design, amenity, functionality and long-term desirability.</p></div>
+    </div>
+    <p style="margin-top:28px;font-family:var(--display);color:var(--light);font-size:1.05rem">Our role is not simply to market and sell completed apartments. The greatest opportunity to influence buyer demand, sales velocity and gross realisation exists before the first residence is released to market.</p>
+  </div>
+</section>
+
+<section class="band fill-navy" id="s3">
+  <div class="wrap reveal">
+    <div class="sec-index">03 / Main Beach · A New Era</div>
+    <div class="sec-head">
+      <div class="eyebrow">A Market In Transition</div>
+      <h2>Main Beach is entering a new era.</h2>
+      <p class="lede">This is not simply another apartment project entering the market. It is one of a limited number of developments that will shape how Main Beach is perceived for decades.</p>
+    </div>
+    <p>We believe the salability of Spyre's Main Beach development is exceptionally strong, underpinned by the convergence of a premium location, evolving market conditions, and increasing demand from affluent owner occupiers, downsizers, interstate migration and second-home purchasers.</p>
+    <h3 style="margin:40px 0 6px">Key fundamentals</h3>
+    <div class="block-grid" style="margin-top:14px">
+      <div class="blk"><span class="tag">Positioning</span><h3>Prestigious Main Beach</h3><p>One of Australia's most tightly held beachside suburbs, currently experiencing a significant transformation through developments including Marina Mirage, Mantaray, Village East and the continued revitalisation of The Spit precinct.</p></div><div class="blk"><span class="tag">Supply</span><h3>Limited competing supply</h3><p>Opportunities to secure new luxury beachside residences within Main Beach remain extremely limited, supporting long-term pricing and scarcity, with most available supply priced between $7M and $30M.</p></div><div class="blk"><span class="tag">Demand</span><h3>Owner-occupier appeal</h3><p>Apartment sizes, location and lifestyle position the project strongly for downsizers seeking premium, low-maintenance living, with all the retail and dining amenity that supports the Main Beach lifestyle they are seeking.</p></div><div class="blk"><span class="tag">Lifestyle</span><h3>World-class lifestyle</h3><p>Proximity to the beach, Federation Walk, Marina Mirage, Southport Yacht Club, Tedder Avenue and the Broadwater creates one of the Gold Coast's most complete lifestyle offerings.</p></div><div class="blk"><span class="tag">Timing</span><h3>The right point in the cycle</h3><p>The project enters the market during a period of continued population growth, increasing interstate migration and sustained demand for apartment living within this precinct.</p></div>
+    </div>
+    <h3 style="margin:44px 0 6px">The investment pipeline</h3>
+    <p style="margin-top:8px">An unprecedented pipeline of private and public investment is reshaping the precinct. Spyre enters at exactly the right point: positioned to benefit from demand the broader precinct is already creating.</p>
+    <div class="block-grid" style="margin-top:14px">
+      <div class="blk"><span class="tag">Hospitality</span><h3>Marina Mirage</h3><p>World-class mixed-use waterfront: a 126-key Luxury Collection by Marriott hotel, 38 ultra-premium residences, fine dining, luxury retail and marina.</p></div><div class="blk"><span class="tag">Hospitality</span><h3>The Ritz-Carlton</h3><p>Redevelopment at Mariners Cove, introducing a globally recognised luxury hospitality brand to Main Beach.</p></div><div class="blk"><span class="tag">Marine</span><h3>Mantaray Marina &amp; Residences</h3><p>An exclusive waterfront residential and superyacht precinct.</p></div><div class="blk"><span class="tag">Residential</span><h3>The Isles</h3><p>Waterfront residences adding to the precinct's premium supply.</p></div><div class="blk"><span class="tag">Marine</span><h3>Carter's Basin</h3><p>Marine precinct redevelopment strengthening the broader marine offering.</p></div><div class="blk"><span class="tag">Resort</span><h3>Village East</h3><p>Resort development at The Spit.</p></div><div class="blk"><span class="tag">Hospitality</span><h3>Sheraton Grand Mirage &amp; Hilton LXR</h3><p>Significant reinvestment into two established luxury resorts.</p></div>
+    </div>
+    <p style="margin-top:24px">Collectively these represent billions of dollars of investment that will permanently elevate Main Beach as one of Australia's premier luxury coastal destinations. Spyre becomes part of that story, not because it follows the transformation, but because it helps define it.</p>
+    <h3 style="margin:44px 0 6px">Key demand drivers</h3>
+    <p style="margin-top:8px">Unlike traditional apartment developments, purchasing decisions at this level are driven by lifestyle, exclusivity and long-term value rather than necessity. Buyers are seeking a product that delivers convenience, security, wellness and exceptional design, supported by a location with enduring appeal.</p>
+    <div class="block-grid" style="margin-top:14px">
+      <div class="blk"><span class="tag">Scarcity</span><h3>Limited future supply</h3><p>Opportunities to acquire new luxury beachside residences within Main Beach remain extremely limited. This scarcity will continue to support buyer demand, pricing resilience and long-term capital growth.</p></div><div class="blk"><span class="tag">Migration</span><h3>Lifestyle migration</h3><p>The Gold Coast continues to attract affluent purchasers relocating from Sydney, Melbourne and Brisbane, together with established Gold Coast residents transitioning from waterfront and suburban homes into premium apartment living. Main Beach benefits from this shift through its established amenity, walkability and premium coastal lifestyle.</p></div><div class="blk"><span class="tag">Amenity</span><h3>Wellness &amp; lifestyle</h3><p>Buyers increasingly prioritise developments that deliver more than exceptional residences. Premium wellness facilities, concierge services, resident lounges, private entertaining spaces, generous car parking ratios and hospitality-inspired amenities have become significant purchasing considerations.</p></div><div class="blk"><span class="tag">Capacity</span><h3>Owner-occupier appeal</h3><p>This buyer profile typically demonstrates stronger purchasing capacity, reduced sensitivity to market fluctuations and greater willingness to pay premium rates for exceptional product, provided the purchasing requirements of the target market are delivered.</p></div><div class="blk"><span class="tag">Difference</span><h3>Product differentiation</h3><p>Through thoughtful design refinement, premium resident amenity and a clear product hierarchy, Spyre has the opportunity to distinguish itself from competing developments and establish a benchmark for luxury apartment living within Main Beach.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- FULL-BLEED LOCATION BAND -->
+<section class="fullbleed" id="location" aria-label="Main Beach, Gold Coast">
+  <div class="fb-img" style="background-image:url('images/broadwater.jpg')"></div>
+  <div class="fb-scrim"></div>
+  <div class="fb-content reveal">
+    <div class="eyebrow">Main Beach · Gold Coast</div>
+    <h2>Between the Broadwater and the ocean.</h2>
+    <p>The Broadwater and the marina on one side, open surf on the other. Spyre sits on the rare stretch where both are the outlook, and that dual aspect is what the campaign leads with before a single price is quoted.</p>
+  </div>
+</section>
+
+<section class="band fill-dark" id="s4">
+  <div class="wrap reveal">
+    <div class="sec-index">04 / Commercial Assessment</div>
+    <div class="sec-head">
+      <div class="eyebrow">Commercial Assessment</div>
+      <h2>Strong fundamentals, real upside.</h2>
+      <p class="lede">The greatest commercial upside lies in refining the product, not increasing apartment numbers.</p>
+    </div>
+    <p>Our recommendations are not intended to maximise apartment numbers or simply justify higher pricing. Rather, they focus on improving buyer desirability, strengthening pricing integrity, and ultimately maximising achievable gross realisation. Each recommendation has been considered through the lens of long-term commercial performance rather than short-term development efficiency, following a detailed review of the concept plans, pricing assumptions, competing developments and buyer behaviour within the Gold Coast apartment market.</p>
+    <div class="split" style="margin-top:32px">
+      <div class="col east"><div class="tower-tag">Existing strengths</div><h3>An excellent foundation.</h3>
+        <ul><li>Location: beachfront, Marina Mirage, Tedder Avenue, The Spit and the marine precinct</li><li>Scale: critical mass to fund amenity boutique projects cannot</li><li>Architectural identity: two distinct towers, preserved view corridors</li><li>Owner-occupier alignment with the strongest market segment</li></ul></div>
+      <div class="col"><div class="tower-tag">Our question</div><h3>How can Spyre maximise gross realisation while reducing project risk?</h3>
+        <p style="margin-top:6px">Every observation below is commercial rather than architectural. None represents a flaw. Each is an opportunity to strengthen an already compelling development.</p></div>
+    </div>
+    <h3 style="margin:44px 0 6px">Key strategic recommendations</h3>
+    <div class="block-grid" style="margin-top:14px">
+      <div class="blk"><span class="tag">One</span><h3>Elevate amenity &amp; wellness</h3><p>Expand resident amenity in the East Tower to establish Spyre as a leading wellness-focused development, lifting desirability and pricing across the project.</p></div><div class="blk"><span class="tag">Two</span><h3>Strengthen owner-occupier appeal</h3><p>Target the segment with the strongest purchasing capacity and the lowest sensitivity to market movement, and design specifically for how they intend to live.</p></div><div class="blk"><span class="tag">Three</span><h3>Improve livability</h3><p>Reduce density where it counts, lift servicing, and remove the day-to-day friction that prestige buyers notice immediately and price accordingly.</p></div><div class="blk"><span class="tag">Four</span><h3>Create a progressive hierarchy</h3><p>Establish a clear progression from Standard to Premium, Sky, Sub-Penthouse and Signature Penthouse so buyers immediately recognise the step up.</p></div><div class="blk"><span class="tag">Five</span><h3>Functionality &amp; premium view utilisation</h3><p>Consistently orient living, dining and entertaining toward the strongest outlook. Reserve premium view corridors for the highest-value product.</p></div><div class="blk"><span class="tag">Six</span><h3>Refine pricing architecture</h3><p>Price each residence to its individual attributes rather than uniformly, so rates rise naturally as the product improves through the building.</p></div><div class="blk"><span class="tag">Seven</span><h3>Disciplined, controlled sell-down</h3><p>Release to demand rather than construction milestones, maintaining scarcity and allowing later releases to benefit from established sales evidence.</p></div><div class="blk"><span class="tag">Eight</span><h3>Leverage combined relationships</h3><p>Engage the combined buyer networks of Kollosche and Place well before the broader public campaign commences.</p></div>
+    </div>
+    <p style="margin-top:26px;font-family:var(--display);color:var(--light);font-size:1.05rem">The greatest opportunity for Spyre is not to maximise apartment numbers. It is to maximise desirability, and in turn yield.</p>
+  </div>
+</section>
+
+<section class="band fill-navy" id="s5">
+  <div class="wrap reveal">
+    <div class="sec-index">05 / Understanding the Buyer</div>
+    <div class="sec-head">
+      <div class="eyebrow">Designing For The Buyer</div>
+      <h2>Who will actually buy here.</h2>
+      <p class="lede">Today's purchaser is not comparing apartments against apartments. They are comparing apartment living against the home they already own. The project must give them compelling reasons to move.</p>
+    </div>
+    <div class="rec-grid">
+      <div class="rec"><div class="kicker">Segment 01</div><h3>Affluent downsizers</h3><p>The largest and most important segment. Typically 55 to 75, often selling waterfront homes of $6M to $30M. They are not downsizing, they are upgrading their lifestyle: simplified living, security, travel flexibility, wellness, lock-and-leave.</p></div><div class="rec"><div class="kicker">Segment 02</div><h3>Business owners &amp; executives</h3><p>A luxury primary residence or city escape. They value privacy, security, concierge, home-office capability and premium entertaining. Many operate businesses well into retirement and work remotely.</p></div><div class="rec"><div class="kicker">Segment 03</div><h3>Second-home purchasers</h3><p>Predominantly Brisbane, Sydney and Melbourne, seeking premium low-maintenance coastal residences. Convenience becomes paramount; quality becomes non-negotiable.</p></div><div class="rec"><div class="kicker">Segment 04</div><h3>High-net-worth retirees</h3><p>Purchasing without finance, deciding on lifestyle rather than return. Service, community and convenience dominate the decision.</p></div>
+    </div>
+    <div class="split" style="margin-top:36px">
+      <div class="col east"><div class="tower-tag">Geographic profile</div><h3>Where demand comes from.</h3>
+        <ul><li>South East Queensland: primarily Gold Coast owner occupiers and Brisbane second-home purchasers</li><li>Sydney &amp; Melbourne: lifestyle-driven buyers seeking a luxury coastal residence</li><li>New Zealand: high-net-worth purchasers with an established affinity for the Gold Coast lifestyle</li><li>Selective international markets: subject to prevailing foreign investment regulations</li></ul></div>
+      <div class="col"><div class="tower-tag">Purchasing motivation</div><h3>What they are actually buying.</h3>
+        <ul><li>Simplified luxury living</li><li>Premium lifestyle amenity</li><li>Security and convenience</li><li>Architectural quality</li><li>Prestige location</li><li>Long-term capital preservation</li><li>Lock-and-leave ownership</li></ul>
+        <p style="margin-top:14px">These buyers are not simply purchasing an apartment. They are investing in a lifestyle that reflects their aspirations and stage of life.</p></div>
+    </div>
+    <p style="margin-top:28px">While investor demand will remain important, we believe owner occupiers and second-home purchasers will ultimately underpin pricing and long-term project success, especially given recent legislative changes impacting investors.</p>
+    <h3 style="margin:44px 0 6px">Buyer alignment</h3>
+    <p style="margin-top:8px">Not every residence within the development needs to target the same purchaser. Premium eastern residences should primarily appeal to owner occupiers and second-home buyers seeking larger floorplans, premium views and an elevated lifestyle experience. Conversely, smaller residences and more accessible price points will continue to appeal to investors and lifestyle purchasers seeking flexibility, location, lifestyle and value. Designing the product mix around these buyer profiles creates a more balanced offering while strengthening pricing across the development.</p>
+    <div class="split" style="margin-top:32px">
+      <div class="col east"><div class="tower-tag">Two principles</div><h3>Living should always face the view.</h3>
+        <p style="margin-top:6px">The most valuable outlook belongs to the spaces where residents spend their day: living, dining, kitchen and outdoor entertaining, ahead of bedrooms, bathrooms and utility. The emotional connection that supports pricing is formed there.</p></div>
+      <div class="col"><div class="tower-tag">Rethinking four bedrooms</div><h3>Flexibility beats bedroom count.</h3>
+        <p style="margin-top:6px">Many downsizers no longer need four permanent bedrooms but highly value flexibility. Consider three bedrooms plus a multipurpose room, executive office, library, media room, wellness room or flexible guest accommodation, whilst maintaining a four-bedroom option as demand requires it.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="band fill-dark" id="s6">
+  <div class="wrap reveal">
+    <div class="sec-index">06 / East Tower · Design Recommendations</div>
+    <div class="sec-head">
+      <div class="eyebrow">The East Tower</div>
+      <h2>A boutique residential address.</h2>
+      <p class="lede">The current design provides a strong foundation. Several refinements can significantly improve the resident experience while supporting stronger pricing, increased buyer demand and enhanced gross realisation.</p>
+    </div>
+    <p>The proposed amenity for the East Tower provides a solid foundation; however, we believe it falls short of the expectations of today's apartment purchaser, which when met greatly improves yield. Rather than maximising apartment numbers, consideration should be given to creating a premium wellness precinct that becomes one of the defining features of the development. Each recommendation is tied to a plan. Open the plan to see the specific change in context.</p>
+
+    <h3 style="margin:44px 0 6px">Resident amenity &amp; wellness</h3>
+    <div class="rec-grid" style="margin-top:14px">
+      <div class="rec"><div class="kicker">Levels 2 &amp; 3</div><h3>Destination wellness precinct</h3><p>Replace the two apartments on Level 2 and the two on Level 3 with premium resident amenity, and dedicate the floors to a world-class wellness destination.</p>
+      <button class="plan-btn" data-plan="wellness">View plan <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5l7 7-7 7"/></svg></button></div><div class="rec"><div class="kicker">Wellness</div><h3>A gym with natural light</h3><p>Expand the gym to approximately 250 to 300 m² with abundant natural light. Current designs appear to have no natural light at all. Add a dedicated Pilates reformer studio and a massage and treatment room.</p></div><div class="rec"><div class="kicker">Wellness</div><h3>Water &amp; heat therapy</h3><p>Magnesium hot and cold plunge pools, with separate steam rooms and saunas, including a dedicated ladies' wellness retreat where practical. This influences purchasing decisions with the older female demographic.</p></div><div class="rec"><div class="kicker">Wellness</div><h3>Recovery &amp; advanced therapy</h3><p>Consider additional premium wellness experiences such as a red-light therapy bed, a cryochamber or snow room, and dedicated recovery facilities.</p></div><div class="rec"><div class="kicker">Level 2</div><h3>Residents' lounge &amp; private dining</h3><p>A residents' lounge incorporating a private dining room, entertaining kitchen and direct outdoor connection where possible, so residents entertain larger groups without oversized apartments.</p></div><div class="rec"><div class="kicker">Commercial benefit</div><h3>Four lots, and what they buy</h3><p>Removing four apartments reduces net saleable area, but the value created through premium resident amenity outweighs the value of four apartments with limited views that look west into Tower 2, which constrains the rates achievable on them.</p></div>
+    </div>
+
+    <h3 style="margin:44px 0 6px">Concierge &amp; resident services</h3>
+    <p style="margin-top:8px">The arrival experience establishes a buyer's first impression of the development and should reflect the calibre of the project. Today's luxury apartment purchaser increasingly expects a service offering comparable to premium hotels.</p>
+    <div class="rec-grid" style="margin-top:14px">
+      <div class="rec"><div class="kicker">Ground floor</div><h3>Concierge &amp; building management</h3><p>A dedicated concierge reception and building management office: visitor assistance, resident support and contractor coordination. The operational heart of the building and a premium first impression.</p>
+      <button class="plan-btn" data-plan="arrival">View plan <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5l7 7-7 7"/></svg></button></div><div class="rec"><div class="kicker">Ground floor</div><h3>Executive meeting room</h3><p>An executive meeting room with full audio-visual capability, plus a resident business lounge where practical: business meetings, client presentations, board and family-office discussions, without external venues.</p>
+      <button class="plan-btn" data-plan="boardroom">View plan <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5l7 7-7 7"/></svg></button></div><div class="rec"><div class="kicker">Ground floor</div><h3>Parcel &amp; grocery storage</h3><p>Secure parcel management and refrigerated grocery storage, so online grocery and meal deliveries are accepted whether or not residents are home. Inexpensive to provide, exceptional in convenience.</p></div>
+    </div>
+    <p style="margin-top:20px">Premium resident services reinforce the luxury positioning of the project while improving convenience, operational efficiency and long-term resident satisfaction.</p>
+
+    <h3 style="margin:44px 0 6px">Car parking strategy</h3>
+    <p style="margin-top:8px">Parking allocation remains one of the most influential purchasing considerations within this buyer segment. Our experience indicates that owner occupiers purchasing at this level generally expect three secure car parks, whilst second-home purchasers will often accept two. Additional car spaces significantly impact salability and rates achieved: an additional car park will typically achieve around $250,000 if sold individually, but the yield is significantly higher when incorporated into the apartment offering.</p>
+    <div class="split" style="margin-top:24px">
+      <div class="col east"><div class="tower-tag">Recommendations</div><h3>Protect long-term value.</h3>
+        <ul><li>Utilise opportunities created through lower-level redesign to increase parking allocation</li><li>Investigate the potential to deliver an additional 10 to 20 spaces where practical</li><li>Prioritise three-car allocations across premium owner-occupier residences</li></ul>
+        <div style="margin-top:20px"><button class="plan-btn" data-plan="parking">View plan <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5l7 7-7 7"/></svg></button></div></div>
+      <div class="col"><div class="tower-tag">Commercial benefit</div><h3>Fewer objections, higher rates.</h3>
+        <p style="margin-top:6px">Improved parking ratios will strengthen owner-occupier demand, support higher pricing and reduce objections throughout the sales process.</p></div>
+    </div>
+
+    <h3 style="margin:44px 0 6px">Apartment design optimisation</h3>
+    <p style="margin-top:8px">Whilst the existing layouts provide a solid foundation, thoughtful refinements have the potential to significantly improve functionality and buyer appeal.</p>
+    <div class="rec-grid" style="margin-top:14px">
+      <div class="rec"><div class="kicker">Orientation</div><h3>Kitchens and living to the east</h3><p>Reorient kitchens and primary living areas towards uninterrupted eastern views wherever practical.</p>
+      <button class="plan-btn" data-plan="living">View plan <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5l7 7-7 7"/></svg></button></div><div class="rec"><div class="kicker">Configuration</div><h3>Three bedrooms plus MPR</h3><p>Review four-bedroom layouts in favour of three-bedroom plus multi-purpose room configurations where appropriate, whilst maintaining a four-bedroom option as demand requires it.</p>
+      <button class="plan-btn" data-plan="mix">View plan <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5l7 7-7 7"/></svg></button></div><div class="rec"><div class="kicker">Master suites</div><h3>Maximise premium frontage</h3><p>Reassess master suite layouts to maximise premium frontage, with improved storage and private lift lobbies where practical.</p>
+      <button class="plan-btn" data-plan="masters">View plan <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5l7 7-7 7"/></svg></button></div><div class="rec"><div class="kicker">Structure</div><h3>Review blade elements</h3><p>Review architectural blade elements that may compromise premium view corridors to the east.</p></div><div class="rec"><div class="kicker">Sub-Penthouses</div><h3>Differentiate the top</h3><p>Further differentiate Sub-Penthouses through upgraded finishes, specifications and ceiling heights.</p></div><div class="rec"><div class="kicker">Penthouses</div><h3>Homes, not apartments</h3><p>Incorporate internal lifts, rooftop kitchens, outdoor entertaining areas and priority lift access within Penthouse residences.</p></div>
+    </div>
+
+    <h3 style="margin:44px 0 6px">Premium specifications</h3>
+    <p style="margin-top:8px">The project's specification schedule should continue to be benchmarked against competing luxury developments to ensure it meets or exceeds buyer expectations. Consideration should be given to premium appliance packages, smart home integration, bespoke joinery, lighting design, ceiling heights and material selections, particularly across the premium residences, Sub-Penthouses and Penthouses. We can provide a baseline outlining what competing products are offering to ensure these minimum standards are met.</p>
+
+    <h3 style="margin:44px 0 6px">View corridors</h3>
+    <p style="margin-top:8px">One of the East Tower's greatest competitive advantages is its uninterrupted eastern outlook. Wherever practical, apartment layouts should prioritise eastern-facing living, dining and entertaining spaces to maximise buyer appeal and fully capitalise on the project's premium beachfront position, instead of being oriented north and south into neighbouring buildings. Orientating the primary living experience towards these view corridors will strengthen both buyer perception and long-term value.</p>
+
+    <p style="margin-top:36px">Positioned as Main Beach's premier boutique residential address, the East Tower should compete with the very best boutique developments on the Gold Coast. Thoughtful refinement of the resident amenity, apartment layouts, parking allocation and premium specifications presents an opportunity to create a significantly more desirable product without fundamentally changing the vision of the development. These recommendations are not intended to increase apartment numbers. They are intended to increase buyer aspiration.</p>
+    <div class="doc-panel reveal">
+      <div class="dp-head"><div class="eyebrow">Plans &amp; Documents</div><span class="dp-note">PDF · opens in a new window</span></div>
+      <a class="doc-link" href="https://www.dropbox.com/scl/fi/gmvf6j4imrtgh1yvyior4/Spyre_East_Tower_DA_Plans.pdf?rlkey=fh2adxvyninkkz467a72kg1yq&amp;st=qgkizetn&amp;dl=0" target="_blank" rel="noopener noreferrer">
+      <span class="doc-ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg></span>
+      <span class="doc-meta"><span class="dt">Spyre East Tower · DA Plans</span><span class="ds">PDF · 65 pages · full development application set</span></span>
+      <span class="arw"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M17 7H8M17 7v9"/></svg></span></a><a class="doc-link" href="https://www.dropbox.com/scl/fi/hq1c746np4tred7rfvohm/Spyre_Floorplans.pdf?rlkey=m62wez7oixshh3j8bcng087jo&amp;st=xp3e1xu4&amp;dl=0" target="_blank" rel="noopener noreferrer">
+      <span class="doc-ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg></span>
+      <span class="doc-meta"><span class="dt">Spyre Floorplans</span><span class="ds">PDF · 3 pages · apartment floorplans</span></span>
+      <span class="arw"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M17 7H8M17 7v9"/></svg></span></a><a class="doc-link" href="https://www.dropbox.com/scl/fi/habzfc6s4ypkwybobg2g5/Spyre_Penthouse.pdf?rlkey=ckw0fgdajon72s5z4wh7u6cli&amp;st=19wemse1&amp;dl=0" target="_blank" rel="noopener noreferrer">
+      <span class="doc-ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg></span>
+      <span class="doc-meta"><span class="dt">Spyre Penthouse Plan</span><span class="ds">PDF · Level 20 penthouse layout</span></span>
+      <span class="arw"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M17 7H8M17 7v9"/></svg></span></a><a class="doc-link" href="https://www.dropbox.com/scl/fi/ku1pn111mdzmrm2y8ib0w/272_Hedges_Example.pdf?rlkey=p53aqz9yxzwv7refoveeme5pk&amp;st=6an75oey&amp;dl=0" target="_blank" rel="noopener noreferrer">
+      <span class="doc-ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg></span>
+      <span class="doc-meta"><span class="dt">Floorplan Presentation Reference</span><span class="ds">PDF · 272 Hedges Avenue · Kollosche format example</span></span>
+      <span class="arw"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M17 7H8M17 7v9"/></svg></span></a>
+    </div>
+  </div>
+</section>
+
+<section class="band fill-navy" id="s7">
+  <div class="wrap reveal">
+    <div class="sec-index">07 / Tower 2 · The Sky Collection</div>
+    <div class="sec-head">
+      <div class="eyebrow">Above The East Tower</div>
+      <h2>The upper levels, a distinct collection.</h2>
+      <p class="lede">Tower 2 presents the single greatest opportunity to further strengthen buyer appeal, maximise pricing and salability, and maximise overall gross realisation.</p>
+    </div>
+    <p>Whilst the current design provides a strong foundation, the upper levels continue to adopt a largely consistent floor plate despite a significant improvement in outlook once the building rises above the East Tower. From a buyer's perspective, these upper levels represent a fundamentally different product and should be designed, positioned and priced accordingly. Reducing density within the building will also support better livability, improved car parking ratios and less demand on amenity.</p>
+
+    <h3 style="margin:44px 0 6px">Product hierarchy</h3>
+    <p style="margin-top:8px">Rather than continuing with a consistent apartment offering throughout the building, we recommend creating a progressive hierarchy of residences that become increasingly exclusive as elevation increases, reflected through apartment size, specifications, ceiling heights, parking allocation, resident experience and ultimately pricing.</p>
+    <div class="rec-grid" style="margin-top:14px">
+      <div class="rec"><div class="kicker">The transition</div><h3>The Sky Collection</h3><p>Once Tower 2 rises above the East Tower roofline, framed views become uninterrupted panoramic ocean views. This is not a better apartment; it is a different product. Reconfigure the upper 12 to 14 levels as a distinct collection of Sky Residences above the standard apartment product.</p>
+      <button class="plan-btn" data-plan="sky">View plan <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5l7 7-7 7"/></svg></button></div><div class="rec"><div class="kicker">Frontage</div><h3>Wider to the east</h3><p>Introduce larger premium residences with wider eastern frontage taking advantage of the uninterrupted eastern views, with increased internal living and outdoor entertaining areas.</p>
+      <button class="plan-btn" data-plan="scarcity">View plan <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5l7 7-7 7"/></svg></button></div><div class="rec"><div class="kicker">Specification</div><h3>A different calibre of finish</h3><p>Introduce upgraded specifications and finishes: ceiling heights lifted to 3 to 3.5 m, bespoke joinery, upgraded appliances, enhanced natural stone, home automation, premium audio, heated flooring and towel rails, wine storage and outdoor kitchens.</p>
+      <button class="plan-btn" data-plan="specs">View plan <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5l7 7-7 7"/></svg></button></div><div class="rec"><div class="kicker">Owner-occupier</div><h3>Purpose-built for downsizers</h3><p>Buyers transitioning from 500 to 1,000 m² homes will not compromise on living space, entertaining, storage, privacy, parking or quality. Design these levels specifically for them.</p>
+      <button class="plan-btn" data-plan="masters">View plan <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5l7 7-7 7"/></svg></button></div><div class="rec"><div class="kicker">Servicing</div><h3>Six lifts and storage</h3><p>Increase the number of lifts servicing the tower to six, and provide resident storage that is currently absent from the core, with private lift lobbies where practical.</p>
+      <button class="plan-btn" data-plan="t2lifts">View plan <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5l7 7-7 7"/></svg></button></div><div class="rec"><div class="kicker">Parking</div><h3>Three-car allocation</h3><p>Improve parking allocations across premium levels. Parking is among the most common prestige objections. Target three secure spaces wherever practical across the premium owner-occupier product.</p>
+      <button class="plan-btn" data-plan="t2parking">View plan <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5l7 7-7 7"/></svg></button></div>
+    </div>
+    <p style="margin-top:20px">Creating a clearly defined product hierarchy strengthens buyer aspiration, supports higher rates per m² and provides greater flexibility when managing pricing throughout the sell-down.</p>
+
+    <h3 style="margin:44px 0 6px">Apartment mix</h3>
+    <p style="margin-top:8px">Our experience indicates the strongest depth of demand sits within residences of approximately <strong>200 m² to 300 m²</strong>, particularly amongst downsizers, owner occupiers and second-home purchasers seeking generous living without the ongoing maintenance associated with larger waterfront homes. Whilst larger residences will remain important, this size range consistently represents the strongest balance between buyer demand, pricing and absorption.</p>
+    <div class="split" style="margin-top:24px">
+      <div class="col east"><div class="tower-tag">Recommendations</div><h3>Fewer apartments, more value.</h3>
+        <ul><li>Introduce larger 202 to 214 m² residences throughout selected premium levels</li><li>Consider six residences per floor by combining existing apartments</li><li>Transition to four, and ultimately two, residences per floor across the uppermost levels</li><li>Retain the flexibility to create a full-floor penthouse should market conditions support it</li><li>Reduce apartment numbers in favour of higher-value product</li></ul></div>
+      <div class="col"><div class="tower-tag">Commercial benefit</div><h3>Aligned to real demand.</h3>
+        <p style="margin-top:6px">This product mix better aligns with current buyer demand while maintaining stronger rates per m² across the premium levels of the development.</p></div>
+    </div>
+
+    <h3 style="margin:44px 0 6px">Premium view corridors</h3>
+    <p style="margin-top:8px">One of Tower 2's greatest competitive advantages is the uninterrupted eastern outlook achieved once the building rises above the East Tower, and its Broadwater views to the north once it clears neighbouring buildings. Apartment layouts should maximise these premium view corridors by prioritising living, dining and entertaining spaces centred around privacy and views.</p>
+    <p style="margin-top:18px">From a buyer's perspective, there is a significant psychological difference between looking <strong>between</strong> buildings and looking <strong>over</strong> them. Once these uninterrupted view corridors are achieved, buyers perceive the product as fundamentally different and are willing to pay accordingly. The current matrix indicates limited premium east-facing product despite this significant advantage. We believe this presents an opportunity to redesign the upper levels to maximise direct eastern frontage, creating larger owner-occupier residences capable of commanding materially stronger rates per m².</p>
+
+    <h3 style="margin:44px 0 6px">Lift strategy</h3>
+    <p style="margin-top:8px">With approximately <strong>280 apartments</strong> proposed within Tower 2, lift performance will become an important component of the overall resident experience. An allowance of only three lifts to service this volume of apartments will significantly impact sales velocity and rates, as well as livability.</p>
+    <div class="split" style="margin-top:24px">
+      <div class="col east"><div class="tower-tag">Recommendations</div><h3>Six lifts, zoned.</h3>
+        <ul><li>Investigate opportunities to increase lift capacity to a minimum of six</li><li>Consider programming lifts to service separate sections of the building, levels 5 to 22 and 23 to 34 as an example</li><li>Provide priority lift access for premium two-per-floor and whole-floor residences</li><li>Investigate dedicated service lift requirements should holiday letting be incorporated</li></ul></div>
+      <div class="col"><div class="tower-tag">Commercial benefit</div><h3>Servicing that matches the price point.</h3>
+        <p style="margin-top:6px">Improved lift functionality enhances convenience, reduces wait times and better aligns the building's operation with buyer expectations at this end of the market. Lift capacity should also be considered in the context of move-ins, move-outs, servicing requirements and any future holiday letting operations, to ensure long-term functionality supports the project's premium positioning.</p></div>
+    </div>
+
+    <h3 style="margin:44px 0 6px">Holiday letting considerations</h3>
+    <p style="margin-top:8px">Clarification is required regarding the intended holiday letting strategy, as this will influence the design, sales rates and long-term operation of the building. Our recommendation is that holiday letting is not encouraged. Should it form part of the overall project strategy, consideration should be given to:</p>
+    <div class="split" style="margin-top:24px">
+      <div class="col east"><div class="tower-tag">Open item for Spyre</div><h3>Design and operational implications.</h3>
+        <ul><li>Dedicated service lift requirements</li><li>Housekeeping operations</li><li>Lift capacity during peak check-in and departure periods</li><li>Concierge and building management functions</li><li>Appropriate Body Corporate by-laws</li><li>Separation of owner-occupier and investor product where practical, limiting holiday letting to levels 5 to 22 as an example</li></ul></div>
+      <div class="col"><div class="tower-tag">Why it matters now</div><h3>Decide before design locks.</h3>
+        <p style="margin-top:6px">Thoughtful planning at this stage will help preserve the resident experience while ensuring the building operates efficiently over the long term. Resolved late, it becomes a retrofit; resolved now, it costs nothing.</p></div>
+    </div>
+
+    <p style="margin-top:36px">Reducing apartment numbers on premium levels may appear to reduce gross realisation. Our view is the opposite: larger residences with uninterrupted eastern views achieve materially higher rates per m², and combined with scarcity, parking and specification, the pricing more than offsets the reduction in count. Rather than simply repeating apartment layouts as the building rises, the product should evolve to reflect the increasing value of elevation, outlook and exclusivity.</p>
+  </div>
+</section>
+
+<section class="band fill-dark" id="s8">
+  <div class="wrap reveal">
+    <div class="sec-index">08 / Product Hierarchy</div>
+    <div class="sec-head">
+      <div class="eyebrow">A Clear Ladder</div>
+      <h2>Five tiers, clearly separated.</h2>
+      <p class="lede">Many developments create internal competition by offering apartments that differ only marginally. Spyre should make the step between levels unmistakable.</p>
+    </div>
+    <div class="block-grid" style="margin-top:8px"><div class="blk"><span class="tag">Tier 01</span><h3>Standard Residences</h3><p>Premium finishes, excellent functionality, exceptional value. The foundation product for owner-occupiers and second-home buyers.</p></div><div class="blk"><span class="tag">Tier 02</span><h3>Premium Residences</h3><p>Larger layouts, improved specifications and better outlooks. A clear step up, not an incremental one.</p></div><div class="blk"><span class="tag">Tier 03</span><h3>Sky Collection</h3><p>Where Tower 2 clears the East Tower. Larger residences, superior specification, broader ocean frontage and premium pricing.</p></div><div class="blk"><span class="tag">Tier 04</span><h3>Sub-Penthouses</h3><p>Bespoke interiors, higher ceilings, private lift lobbies, outdoor kitchens and wine storage. Limited release, premium positioning.</p></div><div class="blk"><span class="tag">Tier 05</span><h3>Signature Penthouses</h3><p>The project's ultimate statement, designed as landmark homes rather than apartments. Marketed independently, never treated as residual stock.</p></div></div><p style="margin-top:24px">This progression creates aspiration as purchasers move higher through the building, and allows rates per m² to increase naturally as product quality improves. Premium residences should also appreciate faster than standard product, widening the differential as supply reduces.</p>
+  </div>
+</section>
+
+<section class="band fill-navy" id="s9">
+  <div class="wrap reveal">
+    <div class="sec-index">09 / Premium Specifications</div>
+    <div class="sec-head">
+      <div class="eyebrow">Specification &amp; Inclusions</div>
+      <h2>Specification that reads as premium.</h2>
+      <p class="lede">Buyers spending $4M to $15M expect meaningful differentiation, not simply a larger floorplan.</p>
+    </div>
+    <p>The specification schedule should continue to be benchmarked against competing luxury developments to ensure it meets or exceeds buyer expectations, particularly across the premium residences, Sub-Penthouses and Penthouses. We can provide a baseline outlining what competing products are offering, so the minimum standards are met before the first residence is released.</p>
+    <div class="block-grid" style="margin-top:32px">
+      <div class="blk"><span class="tag">Technology</span><h3>Automation &amp; audio</h3><p>Home automation, smart home integration, integrated audio, smart lighting, motorised blinds and enhanced security as standard on premium product.</p></div><div class="blk"><span class="tag">Comfort</span><h3>Heated &amp; considered</h3><p>Heated flooring, heated towel rails and additional ceiling height where practical, the details felt on every inspection.</p></div><div class="blk"><span class="tag">Kitchen</span><h3>Feature &amp; function</h3><p>Premium appliance packages, feature natural stone, wine storage, larger butler's pantries and outdoor kitchens.</p></div><div class="blk"><span class="tag">Craft</span><h3>Joinery &amp; lighting</h3><p>Bespoke joinery, considered lighting design and material selections that carry the hierarchy through to the detail.</p></div><div class="blk"><span class="tag">Future</span><h3>EV &amp; services</h3><p>EV charging provisioned across the car park, priority lift access and internal private lifts where practical.</p></div>
+    </div>
+    <div class="band-viz" style="margin-top:36px">
+      <div class="eyebrow">The Coast Precedent</div>
+      <div style="display:flex;flex-wrap:wrap;gap:40px;margin-top:18px;align-items:baseline">
+        <div><div class="metric" style="border:none;padding:0;background:none"><div class="n">~$200K</div><div class="l">Inclusion cost</div></div></div>
+        <div style="font-family:var(--display);color:var(--accent);font-size:1.4rem">→</div>
+        <div><div class="metric" style="border:none;padding:0;background:none"><div class="n">$3–4M</div><div class="l">Realised uplift</div></div></div>
+      </div>
+      <p style="margin-top:18px">On Coast, relatively modest upgrades to the standard specification, around $200K in inclusions, contributed to a material uplift in achievable pricing of $3 to $4 million. Carefully targeted enhancements improve gross realisation without proportionate increases in construction cost. The objective is not to add cost; it is to create perceived value that exceeds the investment required.</p>
+    </div>
+  </div>
+</section>
+
+<section class="band fill-dark" id="s10">
+  <div class="wrap reveal">
+    <div class="sec-index">10 / Pricing &amp; Gross Realisation</div>
+    <div class="sec-head">
+      <div class="eyebrow">Pricing Discipline</div>
+      <h2>Pricing is created long before launch.</h2>
+      <p class="lede">The objective is not simply to achieve the highest possible launch prices. It is to balance momentum whilst maximising the highest achievable gross realisation and maintaining pricing integrity from the first release through to the final residence sold.</p>
+    </div>
+    <p>Based on our review of the current design and the recommended product refinements, we believe an average selling rate of approximately <strong>$20,000/m²</strong> across the net saleable area is achievable, supporting a gross realisation in the order of <strong>$900 million</strong>. We also believe there is potential to exceed this average through the recommended design enhancements and a disciplined, controlled sell-down strategy. The rate structure is built from the floor up on rate per m², not a headline reverse-engineered to a target.</p>
+    <div class="metric-row" style="margin-top:32px">
+      <div class="metric"><div class="n">$15K–$28K</div><div class="l">Per m² range</div></div>
+      <div class="metric"><div class="n">$20K</div><div class="l">Average per m²</div></div>
+      <div class="metric"><div class="n">44,988 m²</div><div class="l">Net saleable area</div></div>
+      <div class="metric"><div class="n">~$900M</div><div class="l">Gross realisation</div><div class="sub">With potential to exceed</div></div>
+    </div>
+    <div class="band-viz">
+      <div class="scale"><span>$15K / m²</span><span>Average $20K / m²</span><span>$28K / m²</span></div>
+      <div class="band-track"><div class="avg"></div></div>
+      <div class="band-note"><span>Entry · west-facing</span><span>Ceiling · Sky, Sub-Penthouse &amp; Penthouse</span></div>
+    </div>
+    <h3 style="margin:44px 0 6px">Pricing philosophy</h3>
+    <p style="margin-top:8px">Developments of this calibre should not be priced uniformly. Each residence should be positioned according to its individual attributes, including aspect, elevation, apartment size, exclusivity, privacy, view corridors, finishes, features, anticipated demand and buyer profile. As the product evolves throughout the building, pricing should evolve accordingly.</p>
+    <div class="block-grid" style="margin-top:14px">
+      <div class="blk"><span class="tag">Entry level</span><h3>$15,000 – $16,000 / m²</h3><p>West-facing apartments, priced to establish accessible entry points and support early velocity.</p></div><div class="blk"><span class="tag">Premium</span><h3>$20,000 – $22,000 / m²</h3><p>Premium residences approaching and exceeding the project average as aspect, size and specification improve.</p></div><div class="blk"><span class="tag">The top</span><h3>$24,000 – $28,000 / m²</h3><p>Sky Residences, Sub-Penthouses and Penthouses, commanding pricing reflective of their exclusivity, specifications and uninterrupted views.</p></div>
+    </div>
+    <p style="margin-top:24px">This structured pricing hierarchy reinforces buyer perception while protecting value across the entire development. Once these recommendations have been considered, design changes incorporated and car parking ratios identified, we can prepare a launch price list, with the understanding that price escalation will continue as the product sells through.</p>
+    <h3 style="margin:44px 0 6px">Pricing architecture</h3>
+    <div class="block-grid" style="margin-top:14px">
+      <div class="blk"><span class="tag">East Tower</span><h3>Boutique Collection</h3><p>Limited residences, higher exclusivity, lifestyle-driven, premium pricing.</p></div><div class="blk"><span class="tag">Tower 2 low/mid</span><h3>Signature Collection</h3><p>Designed for consistent velocity across balanced owner-occupier and second-home demand.</p></div><div class="blk"><span class="tag">Tower 2 upper</span><h3>Sky Collection</h3><p>The premium transition above the East Tower: larger residences, greater scarcity, higher rates per m².</p></div><div class="blk"><span class="tag">Limited release</span><h3>Sub-Penthouses &amp; Penthouses</h3><p>Significantly upgraded, marketed independently, never treated as residual stock.</p></div>
+    </div>
+    <h3 style="margin:44px 0 6px">Controlled sell-down strategy</h3>
+    <p style="margin-top:8px">One of the greatest opportunities to maximise gross realisation lies in the management of inventory throughout the sales program. Rather than releasing all product simultaneously, we recommend a disciplined release strategy that allows pricing to respond to buyer demand, market conditions and sales momentum. Our experience has consistently demonstrated that disciplined inventory management delivers stronger commercial outcomes than attempting to maximise launch volumes.</p>
+    <div class="split" style="margin-top:24px">
+      <div class="col east"><div class="tower-tag">Benefits of the approach</div><h3>Scarcity, staged.</h3>
+        <ul><li>Maintaining scarcity</li><li>Protecting pricing integrity</li><li>Allowing future releases to benefit from established sales evidence</li><li>Reducing unnecessary discounting</li><li>Supporting stronger project valuation outcomes</li></ul></div>
+      <div class="col"><div class="tower-tag">Release discipline</div><h3>In practice.</h3>
+        <ul><li>Hold back selected premium residences</li><li>Release premium inventory progressively</li><li>Adjust release timing to demand, not fixed dates</li><li>Let premium product appreciate faster than standard</li></ul></div>
+    </div>
+    <h3 style="margin:44px 0 6px">Measuring success</h3>
+    <div class="split" style="margin-top:14px">
+      <div class="col east"><div class="tower-tag">Beyond total sales</div><h3>The metrics that matter.</h3>
+        <ul><li>Gross realisation and rate per internal and total m²</li><li>Sales velocity and contract conversion</li><li>Days from enquiry to contract</li><li>Price growth achieved between releases</li></ul></div>
+      <div class="col"><div class="tower-tag">Summary</div><h3>Design, strategy, execution.</h3>
+        <p style="margin-top:6px">Disciplined pricing, controlled inventory management and a relationship-led sales strategy provide the strongest platform to maximise returns for stakeholders while protecting pricing integrity throughout the campaign. Value should be created through design, protected through strategy and realised through disciplined execution.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="band fill-navy" id="s11">
+  <div class="wrap reveal">
+    <div class="sec-index">11 / Sales Strategy</div>
+    <div class="sec-head">
+      <div class="eyebrow">A Disciplined Sell-Down</div>
+      <h2>Enquiry to contract.</h2>
+      <p class="lede">The challenge is not generating enquiry. It is converting enquiry into qualified contracts while carefully managing remaining inventory.</p>
+    </div>
+    <p>The sales strategy should be aligned with the hierarchy of the product. Premium owner-occupier residences should be targeted through direct relationships and private engagement, while investor product can be strategically introduced through local marketing and selected channel partners where appropriate. This approach protects premium stock while ensuring every buyer segment is appropriately serviced.</p>
+    <div class="steps" style="margin-top:32px">
+      <div class="step"><h3>Chairman's List</h3><p>Before any public launch, a private list of the highest-quality buyers known to Spyre, Kollosche and Place. Private briefings and early access build emotional commitment before contracts issue.</p></div>
+      <div class="step"><h3>Database qualification</h3><p>Not all enquiry is equal. Qualify by budget, type, intended use, timing, funding and parking, and manage multiple buyer pools rather than one database.</p></div>
+      <div class="step"><h3>Private appointments</h3><p>Prestige property sells through relationships. Lead with the buyer's lifestyle and motivation, then match them to a residence rather than asking them to select.</p></div>
+      <div class="step"><h3>Controlled release</h3><p>Release to demand, not construction milestones. Each release has a clear objective: momentum and funding, then pricing and scarcity, then premium product.</p></div>
+      <div class="step"><h3>Events with purpose</h3><p>Curated experiences over mass launches: chairman's dinners, architect presentations, wellness evenings, marina experiences and design previews.</p></div>
+      <div class="step"><h3>Contract strategy</h3><p>Treat contract issuance as part of the sale: simplified contracts, executive summaries, documented concessions and lawyers engaged early to reduce friction.</p></div>
+    </div>
+    <h3 style="margin:44px 0 6px">Direct buyer engagement</h3>
+    <p style="margin-top:8px">The combined strength of Kollosche and Place provides immediate access to one of Australia's largest networks of prestige residential purchasers. Many prospective buyers are already known to our businesses through previous transactions and long-standing relationships, allowing meaningful engagement well before the broader public campaign commences. These relationships provide a significant competitive advantage in generating early momentum while supporting the project's pre-sales program.</p>
+    <h3 style="margin:44px 0 6px">Retail before channels</h3>
+    <p style="margin-top:8px">Our recommendation is to prioritise direct retail sales wherever possible. Whilst investment channels will continue to play an important role, particularly for investor-focused product, channel partners should complement the campaign rather than define it, with a focus on product that is less appealing to the local market.</p>
+    <div class="split" style="margin-top:24px">
+      <div class="col east"><div class="tower-tag">Why retail first</div><h3>Direct sales deliver more.</h3>
+        <ul><li>Greater pricing integrity</li><li>Stronger buyer relationships</li><li>Lower acquisition costs</li><li>Improved control over inventory releases</li></ul></div>
+      <div class="col"><div class="tower-tag">Chairman's List &amp; VIP preview program</div><h3>Exclusivity from the outset.</h3>
+        <ul><li>Early market feedback</li><li>Pricing validation</li><li>Initial sales momentum</li><li>Buyer qualification</li><li>Refinement of future release strategies</li></ul>
+        <p style="margin-top:14px">Creating exclusivity from the outset reinforces the premium positioning of the project while building confidence within the broader market.</p></div>
+    </div>
+    <p style="margin-top:28px;font-family:var(--display);color:var(--light);font-size:1.05rem">The project should never appear to be chasing buyers. Buyers should feel they are competing for access.</p>
+  </div>
+</section>
+
+<section class="band fill-dark" id="s12">
+  <div class="wrap reveal">
+    <div class="sec-index">12 / Launch Strategy</div>
+    <div class="sec-head">
+      <div class="eyebrow">A Sequenced Launch</div>
+      <h2>Demand before launch.</h2>
+      <p class="lede">By the time the public launch occurs, many buyers should already have selected their preferred apartment and emotionally committed.</p>
+    </div>
+    <div class="steps">
+      <div class="step"><h3>Phase 1 · Positioning</h3><p>Establish the identity before apartments appear. Spyre should become synonymous with wellness, prestige, architecture, lifestyle, service, exclusivity and Main Beach.</p></div>
+      <div class="step"><h3>Phase 2 · Chairman's List</h3><p>Invitation-only access for existing relationships and VIP clients: private briefings, architect presentations, material selections and priority selection. Create emotional ownership early.</p></div>
+      <div class="step"><h3>Phase 3 · Storytelling</h3><p>Prestige is bought emotionally, then justified financially. Lead with the story of Main Beach, wellness, architecture and marina lifestyle rather than floor plans.</p></div>
+      <div class="step"><h3>Phase 4 · Public launch</h3><p>Only once demand is established. Reinforce scarcity, not availability: limited releases, private appointments, priority access. Encourage commitment, not browsing.</p></div>
+    </div>
+    <h3 style="margin:44px 0 6px">Marketing philosophy</h3>
+    <p style="margin-top:8px">Marketing should do more than showcase apartments. It should communicate the lifestyle, prestige and long-term value of owning within Spyre. Rather than focusing solely on finishes and floorplans, the campaign should position Spyre as one of Main Beach's defining residential addresses, appealing to buyers who are purchasing a lifestyle as much as a residence. Every interaction, from the interior experience centre through to digital presentation, private appointments and settlement, should reinforce this positioning.</p>
+    <div class="block-grid" style="margin-top:26px">
+      <div class="blk"><span class="tag">Media</span><h3>Positioning-led</h3><p>Editorial, luxury and architectural publications, prestige property and business media, targeted digital, video storytelling and milestone PR.</p></div><div class="blk"><span class="tag">Content</span><h3>Timeless, educational</h3><p>Design philosophy, wellness, Main Beach, architecture, concierge and construction progress, sustaining engagement across a multi-year campaign.</p></div><div class="blk"><span class="tag">Events</span><h3>Relationship-deepening</h3><p>Chairman's dinners, wellness experiences, design evenings, marina experiences and private art exhibitions, each generating qualified referrals.</p></div><div class="blk"><span class="tag">Referral</span><h3>Ambassadors</h3><p>The most valuable buyers know one another. Encourage family, business and adviser introductions; referrals convert faster than cold enquiry.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="band fill-navy" id="s13">
+  <div class="wrap reveal">
+    <div class="sec-index">13 / Interior Experience Centre</div>
+    <div class="sec-head">
+      <div class="eyebrow">The Interior Experience Centre</div>
+      <h2>The display as an experience.</h2>
+      <p class="lede">The objective is not to explain the apartments. It is to let purchasers imagine themselves already living there.</p>
+    </div>
+    <p>The interior experience centre will play a critical role in establishing the project's first impression, building buyer confidence in product quality, and reinforcing Spyre's premium positioning. For many purchasers it represents their first physical interaction with the development, and should therefore reflect the quality, sophistication and lifestyle the project seeks to deliver. Rather than simply displaying finishes and floor plans, it should communicate the broader vision of the development, allowing buyers to fully appreciate the standard of design, amenity and lifestyle they are purchasing.</p>
+    <p style="margin-top:18px">It should feel closer to arriving at a private members' club or luxury hotel than a conventional project display. Rather than directing visitors straight to models and floor plans, the experience follows a deliberate sequence.</p>
+    <div class="steps" style="margin-top:32px">
+      <div class="step"><h3>Arrival</h3><p>A warm concierge welcome, refreshments and a comfortable, relaxed lounge.</p></div>
+      <div class="step"><h3>The vision</h3><p>The story of Main Beach, the transformation and Spyre's vision, establishing emotional connection before apartments.</p></div>
+      <div class="step"><h3>The masterplan</h3><p>The relationship between the towers, amenity, views, community and product hierarchy.</p></div>
+      <div class="step"><h3>The apartments</h3><p>A full Tower 2 display and a premium East Tower master suite, finished to the exact quality buyers will receive.</p></div>
+      <div class="step"><h3>Materials gallery</h3><p>Stone, timber, tapware, appliances, joinery and automation buyers can physically touch.</p></div>
+      <div class="step"><h3>Wellness experience</h3><p>Gym finishes, sauna materials, stone and recovery equipment, reinforcing a core point of difference.</p></div>
+      <div class="step"><h3>Immersion room</h3><p>A dedicated room for video content and view simulations where practical, plus an interactive apartment selector.</p></div>
+      <div class="step"><h3>Private suites</h3><p>Dedicated presentation spaces for private appointments, family discussions, contract reviews and confidential negotiations.</p></div>
+    </div>
+    <h3 style="margin:44px 0 6px">Key considerations</h3>
+    <div class="split" style="margin-top:14px">
+      <div class="col east"><div class="tower-tag">What it must deliver</div><h3>Every detail considered.</h3>
+        <ul><li>Premium presentation consistent with the project's positioning</li><li>High-quality material and finish selections</li><li>Interactive apartment models and digital technology</li><li>Wellness and lifestyle storytelling</li><li>Dedicated presentation spaces for private appointments</li><li>An immersion room for video content if practical</li><li>A seamless buyer journey from first enquiry through to contract</li><li>A thoughtful children's area so families stay engaged</li></ul></div>
+      <div class="col"><div class="tower-tag">Commercial benefit</div><h3>Confidence, then conversion.</h3>
+        <p style="margin-top:6px">A premium interior experience centre enhances buyer confidence, reinforces pricing integrity and creates an emotional connection that supports stronger conversion throughout the sales campaign.</p></div>
+    </div>
+    <p style="margin-top:28px;font-family:var(--display);color:var(--light);font-size:1.05rem">Every visitor should leave believing: this is where I want to live.</p>
+  </div>
+</section>
+
+<section class="band fill-dark" id="s14">
+  <div class="wrap reveal">
+    <div class="sec-index">14 / The Partnership Advantage</div>
+    <div class="sec-head">
+      <div class="eyebrow">One Development, Two Markets</div>
+      <h2>Why Kollosche + Place.</h2>
+      <p class="lede">Marketing generates awareness. Relationships generate contracts. The objective is to place the project in front of the right buyers before the market is even aware of it.</p>
+    </div>
+    <p>The successful delivery of a project of this calibre requires more than an experienced sales team. It requires a strategic partnership that combines market intelligence, buyer relationships and disciplined execution from project refinement through to final settlement. Kollosche's dedicated New Projects division has been established to work alongside developers from the earliest stages of a project, providing strategic advice that strengthens product positioning, pricing strategy and long-term commercial outcomes.</p>
+    <div class="split" style="margin-top:32px">
+      <div class="col east"><div class="tower-tag">Kollosche</div><h3>Gold Coast leadership.</h3>
+        <p style="margin-top:6px">Market leadership across the Gold Coast prestige market, strategic project advisory, and long-standing relationships with waterfront owners, existing apartment owners, entrepreneurs and family offices most likely to buy here.</p></div>
+      <div class="col"><div class="tower-tag">Place</div><h3>Brisbane penetration.</h3>
+        <p style="margin-top:6px">Unparalleled reach into the Brisbane prestige market, one of the project's most important buyer pools, and direct access to purchasers treating the Gold Coast as an extension of their lifestyle.</p></div>
+    </div>
+    <p style="margin-top:28px">Together, the partnership delivers an exceptional combination of local market expertise, proven project marketing capability, and direct access to one of Australia's largest networks of qualified property buyers for this product and location. The advantage is access before advertising. Many future purchasers are not prospects waiting to discover Spyre; they are existing clients whose holdings, capacity and intentions are already understood. That means higher-quality conversations, faster conversion and reduced reliance on expensive lead generation.</p>
+    <h3 style="margin:44px 0 6px">Our difference</h3>
+    <div class="split" style="margin-top:14px">
+      <div class="col east"><div class="tower-tag">Beyond the sale</div><h3>We would rather shape the market than respond to it.</h3>
+        <p style="margin-top:6px">Our role extends well beyond the sale of apartments. By working collaboratively throughout the design, positioning and launch phases, we can help refine the product, strengthen market perception, build early demand, and maximise the long-term commercial success of the development.</p></div>
+      <div class="col"><div class="tower-tag">Our approach</div><h3>An extension of the Spyre team.</h3>
+        <p style="margin-top:6px">Our objective is to become an extension of the Spyre team, providing practical advice, transparent communication and disciplined execution throughout every stage of the development. Three businesses, but the purchaser should experience one brand, one strategy, one pricing philosophy and one level of service.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="band fill-navy" id="s15">
+  <div class="wrap reveal">
+    <div class="sec-index">15 / The Team</div>
+    <div class="sec-head">
+      <div class="eyebrow">One Master Relationship</div>
+      <h2>Three agents, one master relationship.</h2>
+      <p class="lede">Spyre manages a single relationship. Simon Caulfield, white-labelled as Master Agent inside the project brand, runs the agents, channels, contracts and reporting across the whole programme.</p>
+    </div>
+    <div class="agents">
+      <div class="agent-card master">
+        <div class="agent-id master-id">
+          <div class="agent-photo"><img src="images/simon.jpg" alt="Simon Caulfield"></div>
+          <div>
+            <div class="agent-role">Master Agent · White-labelled under project brand</div>
+            <div class="agent-name">Simon Caulfield</div>
+            <div class="agent-org">Single point of contact for Spyre</div>
+          </div>
+        </div>
+        <div class="agent-desc">
+          <p>Simon Caulfield operates as the white-labelled Master Agent, embedded directly within the project brand. From the buyer's perspective, they are dealing with the project, not an external agency. This ensures brand consistency, message control, and a premium buyer experience aligned with Spyre's vision.</p>
+          <p>As the single point of contact for Spyre, Simon manages all agent relationships, sales volumes, contracts, reporting and compliance across the entire programme. The developer benefits from three agents and multiple sales channels while only managing one relationship.</p>
+          <div class="agent-focus">
+            <div class="fh">Key focus</div>
+            <div class="fl">Single point of contact · Agent management · Sales volumes · Contracts · Reporting &amp; compliance · Brand control</div>
+          </div>
+        </div>
+      </div>
+      <div class="agent-card">
+        <div class="agent-id">
+          <div class="agent-photo"><img src="images/michael.jpg" alt="Michael Kollosche"></div>
+          <div>
+            <div class="agent-role">Local Agent</div>
+            <div class="agent-name">Michael Kollosche</div>
+            <div class="agent-org">Kollosche</div>
+          </div>
+        </div>
+        <div class="agent-desc">
+          <p>Gold Coast's leading luxury real estate agency. Michael Kollosche brings unmatched local market dominance, an extensive buyer database, and deep relationships within the premium Gold Coast market. Kollosche's presence ensures local and Brisbane buyers are serviced through the Interior Experience Centre with a hands-on, relationship-driven approach.</p>
+          <div class="agent-focus">
+            <div class="fh">Key focus</div>
+            <div class="fl">Local buyer network · Interior Experience Centre · Walk-in traffic · Gold Coast &amp; Brisbane market · Tower 01 &amp; Tower 02</div>
+          </div>
+        </div>
+      </div>
+      <div class="agent-card">
+        <div class="agent-id">
+          <div class="agent-photo"><img src="images/graeme.jpg" alt="Graeme Holm"></div>
+          <div>
+            <div class="agent-role">Channel Agent</div>
+            <div class="agent-name">Graeme Holm</div>
+            <div class="agent-org">Infinity Group</div>
+          </div>
+        </div>
+        <div class="agent-desc">
+          <p>Australia's original Money Mentor with an extensive national network of property buyers and investors. Graeme Holm's Infinity Group activates multiple sales channels simultaneously: interstate buyers, investor networks, financial planning referrals, and event-driven lead generation. Critical for achieving volume targets and de-risking the 40% pre-sales requirement.</p>
+          <div class="agent-focus">
+            <div class="fh">Key focus</div>
+            <div class="fl">Interstate channels · Investor networks · Priority access once the Interior Experience Centre is operational (Tower 02) · Volume sales · National reach</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="band fill-navy" id="s16">
+  <div class="wrap reveal">
+    <div class="sec-index">16 / Reporting &amp; Governance</div>
+    <div class="sec-head">
+      <div class="eyebrow">Transparent, Measurable, Actionable</div>
+      <h2>Reporting Spyre can plan around.</h2>
+      <p class="lede">A development of this scale requires more than weekly sales reports. It requires meaningful commercial intelligence.</p>
+    </div>
+    <p>Successful project delivery relies on transparent communication, timely reporting and ongoing strategic review. We recommend a structured reporting framework that provides Spyre with meaningful market intelligence, enabling informed decision-making throughout every stage of the sales program.</p>
+    <div class="block-grid" style="margin-top:32px">
+      <div class="blk"><span class="tag">Weekly</span><h3>Executive dashboard</h3><p>Sales activity, enquiry, qualified buyers, appointments, contracts issued and exchanged, velocity, rates per m², gross realisation, remaining inventory and pricing recommendations.</p></div><div class="blk"><span class="tag">Weekly</span><h3>Market intelligence</h3><p>Competitor launches, comparable sales, emerging trends, interest rates and shifts in purchaser behaviour.</p></div><div class="blk"><span class="tag">Ongoing</span><h3>Buyer feedback &amp; objection analysis</h3><p>Not just numbers: why buyers are and are not buying, preferred types, desired specifications and design feedback that informs future releases.</p></div><div class="blk"><span class="tag">Ongoing</span><h3>Inventory &amp; release review</h3><p>Inventory and release strategy reviews, with pricing recommendations and forecasting against pre-sales targets.</p></div><div class="blk"><span class="tag">Ongoing</span><h3>Marketing performance</h3><p>Campaign performance updates measured against enquiry quality and contract conversion, not impressions.</p></div><div class="blk"><span class="tag">Monthly</span><h3>Strategic review</h3><p>A formal review of remaining inventory, future releases, pricing adjustments, product refinements and marketing effectiveness, with regular strategy meetings alongside the Spyre team.</p></div>
+    </div>
+    <p style="margin-top:24px">A structured reporting process allows opportunities to be identified early, pricing strategies to evolve with market conditions and informed decisions to be made throughout the campaign. Spyre retains complete visibility across every stage, so decisions are made strategically rather than reactively. The project stays dynamic rather than fixed.</p>
+  </div>
+</section>
+
+<section class="band fill-dark" id="s17">
+  <div class="wrap reveal">
+    <div class="sec-index">17 / Project Delivery Strategy</div>
+    <div class="sec-head">
+      <div class="eyebrow">From Appointment To Settlement</div>
+      <h2>A structured path to launch, and beyond.</h2>
+      <p class="lede">Our involvement extends beyond the launch of the project. We see our role as working alongside Spyre throughout the entire lifecycle of the development, providing strategic advice from product refinement through to final settlement.</p>
+    </div>
+    <div class="steps">
+      <div class="step"><h3>Stage One · Product refinement</h3><p>Review apartment layouts and specifications, refine pricing architecture, finalise buyer positioning, assist with interior experience centre planning and finalise launch strategy.</p></div>
+      <div class="step"><h3>Stage Two · Pre-launch</h3><p>Database segmentation, Chairman's List engagement rewarding early adopters, VIP previews, marketing preparation and buyer qualification.</p></div>
+      <div class="step"><h3>Stage Three · Public launch</h3><p>Coordinated marketing campaign, private appointments, interior experience centre activation, strategic inventory releases and ongoing pricing review.</p></div>
+      <div class="step"><h3>Stage Four · Sales program</h3><p>Weekly reporting, controlled product releases, continuous pricing optimisation, market feedback integration and buyer relationship management.</p></div>
+      <div class="step"><h3>Stage Five · Settlement</h3><p>Contract management, purchaser communication, settlement coordination, handover support and ongoing developer reporting.</p></div>
+    </div>
+    <p style="margin-top:26px">We believe successful project marketing begins well before the first apartment is released and continues long after contracts are exchanged. By remaining actively involved throughout each stage of the development, we can continually refine strategy, respond to market conditions and ensure the project remains aligned with its commercial objectives. Our focus is not simply to achieve strong early sales, but to maximise value across the entire life of the project.</p>
+  </div>
+</section>
+
+<section class="band fill-navy" id="s18">
+  <div class="wrap reveal">
+    <div class="sec-index">18 / Relevant Project Experience</div>
+    <div class="sec-head">
+      <div class="eyebrow">Track Record</div>
+      <h2>Proof of execution.</h2>
+      <p class="lede">Every recommendation here has been developed through practical experience rather than theory.</p>
+    </div>
+    <p>Our team has successfully represented many of South East Queensland's most significant prestige residential developments, working closely with developers to deliver strategic advice, premium sales campaigns and successful project outcomes. Our experience extends beyond project marketing and includes product positioning, pricing architecture, buyer profiling, launch strategy and ongoing commercial advisory throughout the life of a project.</p>
+    <h3 style="margin:44px 0 6px">Selected experience</h3>
+    <div class="block-grid" style="margin-top:14px">
+      <div class="blk"><span class="tag">Absolute beachfront</span><h3>Nalu by Monaco</h3><p>Our involvement included product positioning, redesign of floorplans and amenity, car parking allocations, design meetings from inception to launch, detailing finishes, pricing strategy, launch strategy, contract management, buyer engagement, marketing strategy and all aspects of the sales process.</p></div><div class="blk"><span class="tag">Strategic advisory</span><h3>Marina Mirage Residences</h3><p>Strategic commercial review incorporating salability assessment, buyer profiling, pricing recommendations and development positioning for one of the Gold Coast's most significant luxury precincts.</p></div><div class="blk"><span class="tag">Prestige beachfront</span><h3>Coast, Mermaid Beach</h3><p>Prestige beachfront development targeting affluent owner occupiers and second-home purchasers, with a focus on pricing integrity, inventory management and premium sales execution.</p></div>
+    </div>
+    <h3 style="margin:44px 0 6px">What each project taught us</h3>
+    <div class="cases" style="margin-top:14px">
+      <div class="case key"><div class="cn">Coast</div><div class="badge">Product refinement</div><p>Automation, integrated audio, EV charging and heated finishes modestly raised cost but materially lifted buyer perception and pricing. Well-targeted upgrades create disproportionate value.</p></div>
+      <div class="case"><div class="cn">Nalu</div><div class="badge">Controlled sell-down</div><p>Premium inventory held tightly, pricing increased through the campaign. Scarcity protects pricing.</p></div>
+      <div class="case"><div class="cn">Drift</div><div class="badge">Buyer relationships</div><p>Many purchasers were known to the team well before marketing. Relationships convert faster than enquiries.</p></div>
+      <div class="case"><div class="cn">Ari / La Reeve</div><div class="badge">Market positioning</div><p>Positioned around lifestyle and long-term ownership rather than price. Prestige buyers purchase lifestyle before specifications.</p></div>
+      <div class="case"><div class="cn">Marina Mirage</div><div class="badge">Strategic advisory</div><p>An appointment spanning product, pricing, buyer profiling, positioning and reporting, not simply selling apartments.</p></div>
+    </div>
+    <p style="margin-top:24px">Our team continues to advise on and represent luxury residential developments across the Gold Coast, providing developers with strategic insight into buyer behaviour, pricing strategy and market positioning throughout each stage of the development process. Each project reinforces the same principle: the greatest improvements in gross realisation rarely come from increasing asking prices. They come from creating a product buyers perceive to be worth more.</p>
+  </div>
+</section>
+
+<section class="band fill-navy" id="s19">
+  <div class="wrap reveal">
+    <div class="sec-index">19 / Fee Proposal</div>
+    <div class="sec-head">
+      <div class="eyebrow">Aligned Interests</div>
+      <h2>Transparent from the first release.</h2>
+      <p class="lede">Our proposed fee structure has been designed to align our interests with those of Spyre while providing complete transparency throughout the project.</p>
+    </div>
+    <div class="split">
+      <div class="col east"><div class="tower-tag">Retail sales</div><h3>Standard structure, direct team.</h3>
+        <p style="margin-top:6px">Our standard retail commission structure applies to all direct sales generated and transacted by the Kollosche and Place project sales team.</p></div>
+      <div class="col"><div class="tower-tag">Channel partners</div><h3>Complement, not replace.</h3>
+        <p style="margin-top:6px">Where appropriate, selected channel partners may be engaged to complement the retail sales program. However, our recommendation remains to prioritise direct buyer engagement wherever possible, to maximise pricing integrity and minimise acquisition costs.</p></div>
+    </div>
+    <h3 style="margin:44px 0 6px">Project commission fee</h3>
+    <div class="metric-row" style="margin-top:14px">
+      <div class="metric"><div class="n">3% + GST</div><div class="l">Direct sale</div><div class="sub">Sold directly via Kollosche New Projects agents or Simon Caulfield</div></div>
+      <div class="metric"><div class="n">1% + GST</div><div class="l">Referral override</div><div class="sub">Sold via Kollosche Residential agents</div></div>
+      <div class="metric"><div class="n">TBD</div><div class="l">Channel agents</div><div class="sub">Rate to be discussed</div></div>
+    </div>
+    <h3 style="margin:44px 0 6px">Payment terms</h3>
+    <table class="data" style="margin-top:14px">
+      <thead><tr><th>Milestone</th><th>Portion</th></tr></thead>
+      <tbody><tr><td>Unconditional contract exchange</td><td>50% payable</td></tr><tr><td>Settlement</td><td>50% payable</td></tr></tbody>
+    </table>
+    <p style="margin-top:28px">All rates are exclusive of GST. These terms can be formalised within the agency agreement on appointment.</p>
+  </div>
+</section>
+
+<section class="band fill-dark" id="s20">
+  <div class="wrap reveal">
+    <div class="sec-index">20 / Why Spyre</div>
+    <div class="sec-head">
+      <div class="eyebrow">Main Beach's Next Address</div>
+      <h2>Why Spyre.</h2>
+      <p class="lede">Every successful development begins with a vision. The most successful begin with a vision that changes the market.</p>
+    </div>
+    <p>Spyre's Main Beach development represents one of the most exciting residential opportunities currently emerging within the Gold Coast property market. Few sites combine this position, scale, architectural presence, surrounding investment, buyer depth and long-term growth. Large sites in Main Beach have become exceptionally scarce and are unlikely to be replicated often over the coming decades. The decisions made today will influence how Spyre is regarded twenty years from now.</p>
+    <h3 style="margin:40px 0 6px">Summary of recommendations</h3>
+    <table class="data" style="margin-top:14px">
+      <thead><tr><th>Recommendation</th><th>Commercial benefit</th><th>Expected outcome</th></tr></thead>
+      <tbody><tr><td>Create Level 2 wellness precinct</td><td>Increases buyer desirability</td><td>Higher rates per m²</td></tr><tr><td>Introduce the Sky Collection</td><td>Better utilise premium views</td><td>Higher gross realisation</td></tr><tr><td>Increase parking ratios</td><td>Improve owner-occupier appeal</td><td>Faster sell-down</td></tr><tr><td>Refine apartment hierarchy</td><td>Stronger pricing architecture</td><td>Greater pricing integrity</td></tr><tr><td>Controlled release strategy</td><td>Maintain scarcity</td><td>Protect GR throughout the campaign</td></tr><tr><td>Chairman's List &amp; existing buyer strategy</td><td>Accelerate pre-sales</td><td>Funding milestones achieved</td></tr><tr><td>Premium concierge &amp; resident services</td><td>Differentiate the development</td><td>Enhanced project reputation</td></tr></tbody>
+    </table>
+    <p style="margin-top:26px">Our review has identified several opportunities to further strengthen the product through considered design refinement, enhanced resident amenity, improved product hierarchy and a disciplined pricing and sales strategy. The greatest opportunity is not to maximise apartment numbers, but to maximise desirability. By creating a product buyers genuinely aspire to own, stronger pricing, improved sales velocity and enhanced returns with less stakeholder risk naturally follow.</p>
+    <p style="margin-top:18px">Backed by the combined strength of Kollosche, our dedicated New Projects division and Place Estate Agents, we are committed to working alongside Spyre as a strategic development partner, providing practical insight, market expertise and disciplined execution from project refinement through to final settlement. We appreciate the opportunity to present our recommendations and look forward to discussing how, together, we can deliver one of the Gold Coast's defining residential developments.</p>
+    <p style="margin-top:26px;font-family:var(--display);color:var(--light);font-size:1.05rem">Our ambition is not simply to help deliver a successful project. It is to help create one of Australia's most highly regarded residential developments. Landmark developments do more than change skylines; they change expectations.</p>
+  </div>
+</section>
+
+<!-- 20. CORE MESSAGE -->
+<section class="core" id="s21">
+  <div class="wrap reveal">
+    <div class="eyebrow" style="margin-bottom:30px">The One Thing To Remember</div>
+    <blockquote>Great developments are remembered for the buildings they create. Exceptional developments are remembered for the standards they <em>redefine</em>.</blockquote>
+    <p style="margin-top:34px;font-family:var(--display);color:var(--light);font-size:1.05rem;max-width:52ch">We believe Spyre has the opportunity to achieve both. Our role is to help make that happen.</p>
+  </div>
+</section>
+
+<footer>
+  <div class="wm">Kollosche <span>×</span> Place Brisbane</div>
+  <div class="conf">Prepared for Spyre Group · Strategic Sales, Product &amp; Commercial Review · Confidential</div>
+</footer>
+
+<!-- PLAN MODAL -->
+<div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="modal-card">
+    <div class="modal-head">
+      <div>
+        <div class="m-eyebrow" id="modalEyebrow">Design recommendation</div>
+        <h3 id="modalTitle">Plan</h3>
+      </div>
+      <button class="modal-x" id="modalX" aria-label="Close plan">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="plan-figure" id="planFigure"></div>
+      <div class="modal-note" id="modalNote"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ---------- Section index data ---------- */
+const SECTIONS = [
+  ["01","Spyre Main Beach","s1"],
+  ["02","The Opportunity","s2"],
+  ["03","Main Beach · A New Era","s3"],
+  ["04","Commercial Assessment","s4"],
+  ["05","Understanding the Buyer","s5"],
+  ["06","East Tower · Design","s6"],
+  ["07","Tower 2 · Sky Collection","s7"],
+  ["08","Product Hierarchy","s8"],
+  ["09","Premium Specifications","s9"],
+  ["10","Pricing & Gross Realisation","s10"],
+  ["11","Sales Strategy","s11"],
+  ["12","Launch Strategy","s12"],
+  ["13","Interior Experience Centre","s13"],
+  ["14","Partnership Advantage","s14"],
+  ["15","The Team","s15"],
+  ["16","Reporting & Governance","s16"],
+  ["17","Project Delivery Strategy","s17"],
+  ["18","Relevant Project Experience","s18"],
+  ["19","Fee Proposal","s19"],
+  ["20","Why Spyre","s20"],
+  ["21","Core Message","s21"]
+];
+const navGrid = document.getElementById('navGrid');
+SECTIONS.forEach(([n,t,id])=>{
+  const a=document.createElement('a');
+  a.className='nav-link';a.href='#'+id;
+  a.innerHTML=`<span class="nav-num">${n}</span><span class="nav-txt">${t}</span>`;
+  a.addEventListener('click',()=>closeNav());
+  navGrid.appendChild(a);
+});
+
+/* ---------- Anchor menu (top) ---------- */
+const SHORT=["Overview","Opportunity","Main Beach","Assessment","The Buyer","East Tower","Sky Collection","Hierarchy","Specification","Pricing","Sales","Launch","Experience Centre","Partnership","The Team","Reporting","Delivery","Experience","Fees","Why Spyre","Message"];
+const subTrack=document.getElementById('subnavTrack');
+const chips=[];
+SECTIONS.forEach(([n,t,id],i)=>{
+  const a=document.createElement('a');
+  a.className='subnav-chip';a.href='#'+id;a.dataset.target=id;
+  a.innerHTML=`<span class="cn">${n}</span><span class="cl">${SHORT[i]}</span>`;
+  subTrack.appendChild(a);chips.push(a);
+});
+function centerChip(c){
+  const target=c.offsetLeft-subTrack.clientWidth/2+c.clientWidth/2;
+  subTrack.scrollTo({left:Math.max(0,target),behavior:'smooth'});
+}
+function layout(){
+  const bar=document.getElementById('topbar');
+  const sub=document.getElementById('subnav');
+  const h=bar.offsetHeight;
+  sub.style.top=h+'px';
+  document.documentElement.style.setProperty('--anchor-offset',(h+sub.offsetHeight+10)+'px');
+}
+layout();addEventListener('resize',layout);addEventListener('load',layout);
+const spy=new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      chips.forEach(c=>{
+        const on=c.dataset.target===e.target.id;
+        c.classList.toggle('active',on);
+        if(on)centerChip(c);
+      });
+    }
+  });
+},{rootMargin:'-45% 0px -50% 0px',threshold:0});
+document.querySelectorAll('section[id]').forEach(s=>spy.observe(s));
+
+/* ---------- Nav overlay ---------- */
+const overlay=document.getElementById('navOverlay');
+const menuBtn=document.getElementById('menuBtn');
+function openNav(){overlay.classList.add('open');menuBtn.setAttribute('aria-expanded','true')}
+function closeNav(){overlay.classList.remove('open');menuBtn.setAttribute('aria-expanded','false')}
+menuBtn.addEventListener('click',openNav);
+document.getElementById('navClose').addEventListener('click',closeNav);
+
+/* ---------- Progress + topbar ---------- */
+const progress=document.getElementById('progress');
+const topbar=document.getElementById('topbar');
+function onScroll(){
+  const h=document.documentElement.scrollHeight-innerHeight;
+  progress.style.width=(scrollY/h*100)+'%';
+  topbar.classList.toggle('solid',scrollY>60);
+}
+addEventListener('scroll',onScroll,{passive:true});onScroll();
+
+/* ---------- Reveal on scroll ---------- */
+const io=new IntersectionObserver((es)=>{
+  es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})
+},{threshold:.12});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+/* ---------- Plan modal ---------- */
+const modal=document.getElementById('modal');
+const planFigure=document.getElementById('planFigure');
+const modalTitle=document.getElementById('modalTitle');
+const modalNote=document.getElementById('modalNote');
+
+function plate(highlight, viewLabel){
+  const hz = highlight ? `
+    <rect x="${highlight.x}" y="${highlight.y}" width="${highlight.w}" height="${highlight.h}"
+      fill="rgba(201,169,110,.16)" stroke="#c9a96e" stroke-width="2"/>
+    <text x="${highlight.x+highlight.w/2}" y="${highlight.y+highlight.h/2}" fill="#c9a96e"
+      font-family="Archivo,sans-serif" font-size="13" font-weight="600" text-anchor="middle" dominant-baseline="middle"
+      letter-spacing="1.5">${highlight.label}</text>` : '';
+  return `<svg viewBox="0 0 560 360" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="${viewLabel}">
+    <defs><pattern id="g" width="28" height="28" patternUnits="userSpaceOnUse">
+      <path d="M28 0H0V28" fill="none" stroke="rgba(221,220,217,.06)" stroke-width="1"/></pattern></defs>
+    <rect x="0" y="0" width="560" height="360" fill="url(#g)"/>
+    <rect x="40" y="34" width="480" height="292" fill="rgba(35,51,86,.35)" stroke="rgba(221,220,217,.35)" stroke-width="2"/>
+    <rect x="250" y="150" width="60" height="60" fill="rgba(35,51,86,.7)" stroke="rgba(221,220,217,.25)" stroke-width="1.5"/>
+    <text x="280" y="184" fill="rgba(221,220,217,.5)" font-family="Archivo,sans-serif" font-size="10" text-anchor="middle" letter-spacing="1">CORE</text>
+    <line x1="40" y1="180" x2="250" y2="180" stroke="rgba(221,220,217,.14)" stroke-width="1"/>
+    <line x1="310" y1="180" x2="520" y2="180" stroke="rgba(221,220,217,.14)" stroke-width="1"/>
+    <line x1="160" y1="34" x2="160" y2="326" stroke="rgba(221,220,217,.1)" stroke-width="1"/>
+    <line x1="400" y1="34" x2="400" y2="326" stroke="rgba(221,220,217,.1)" stroke-width="1"/>
+    <text x="536" y="184" fill="#6a89af" font-family="Archivo,sans-serif" font-size="11" text-anchor="middle" letter-spacing="2" transform="rotate(90 536 184)">EAST · OCEAN</text>
+    ${hz}
+  </svg>`;
+}
+
+const PLANS={
+  arrival:{t:"Ground floor · concierge &amp; arrival",note:"<strong>Recommended:</strong> a dedicated concierge reception and building management office, with secure parcel, key and refrigerated grocery storage. The operational heart of the building and the first impression that underpins the ceiling price.",hl:{x:180,y:250,w:200,h:60,label:"CONCIERGE"}},
+  boardroom:{t:"Ground floor · executive facility",note:"<strong>Recommended:</strong> an executive meeting room with full audio-visual capability, plus a resident business lounge where practical, for business, client, board and family-office use without external venues.",hl:{x:60,y:54,w:170,h:96,label:"EXECUTIVE"}},
+  wellness:{t:"Levels 2 &amp; 3 · destination wellness precinct",note:"<strong>Recommended:</strong> replace the two apartments on Level 2 and the two on Level 3 with premium resident amenity: a 250 to 300 m² naturally lit gym (the current design appears to have no natural light at all), Pilates reformer studio, magnesium hot and cold plunge pools, separate saunas and steam rooms, a ladies' wellness retreat, red-light therapy, cryochamber or snow room and recovery and treatment rooms, plus a residents' lounge with private dining room, entertaining kitchen and direct outdoor connection.",hl:{x:40,y:34,w:480,h:140,label:"WELLNESS FLOOR"}},
+  parking:{t:"Car parking · protect long-term value",note:"<strong>Recommended:</strong> owner occupiers at this level generally expect three secure car parks; second-home purchasers will often accept two. Utilise the lower-level redesign to increase allocation, investigate a further 10 to 20 spaces and prioritise three-car allocations across premium residences. An additional car park typically achieves around $250,000 sold individually, and materially more when incorporated into the apartment.",hl:{x:60,y:54,w:180,h:252,label:"+ SPACES"}},
+  living:{t:"Living should face the view",note:"<strong>Principle:</strong> orient living, dining, kitchen and outdoor entertaining toward the strongest outlook, ahead of bedrooms, bathrooms and utility, instead of orienting north and south into neighbouring buildings. Also review architectural blade elements that may compromise premium view corridors to the east.",hl:{x:320,y:54,w:190,h:150,label:"LIVING · EAST"}},
+  mix:{t:"Flexible configuration · 3 bed + MPR",note:"<strong>Recommended:</strong> reconfigure the straight four-bedroom into three bedrooms plus a multipurpose room, executive office, library, media or wellness room, whilst maintaining a four-bedroom option as demand requires it. Downsizers value flexibility over bedroom count.",hl:{x:60,y:210,w:200,h:96,label:"OFFICE + MPR"}},
+  sky:{t:"Tower 2 · the Sky Collection",note:"<strong>Recommended:</strong> once Tower 2 clears the East Tower roofline, views become uninterrupted panoramic ocean. There is a significant psychological difference between looking <em>between</em> buildings and looking <em>over</em> them. Reconfigure the upper 12 to 14 levels as a distinct collection of Sky Residences, designed around the view.",hl:{x:320,y:54,w:190,h:252,label:"EAST VIEWS"}},
+  scarcity:{t:"Fewer apartments, more value",note:"<strong>Recommended:</strong> six residences per floor at 202 to 214 m² through the premium levels, transitioning to four and ultimately two per floor across the uppermost levels, with the flexibility to create a full-floor penthouse should market conditions support it. Premium markets reward scarcity over volume.",hl:{x:120,y:80,w:320,h:200,label:"FEWER · LARGER"}},
+  specs:{t:"Premium specification",note:"<strong>Applied:</strong> ceiling heights lifted to 3 to 3.5 m, bespoke joinery, upgraded appliances, enhanced stone, home automation, premium audio, heated flooring and towel rails, wine storage and outdoor kitchens.",hl:{x:150,y:120,w:260,h:120,label:"3 – 3.5 m"}},
+  masters:{t:"Master suites, storage &amp; lobbies",note:"<strong>Recommended:</strong> larger master suites, improved storage and private lift lobbies where practical, so the upper levels read as homes rather than apartments.",hl:{x:60,y:54,w:200,h:120,label:"MASTER · STORAGE"}},
+  t2lifts:{t:"Tower 2 · vertical transport &amp; storage",note:"<strong>Recommended:</strong> with approximately 280 apartments proposed, three lifts will significantly impact sales velocity, rates and livability. Increase to a minimum of six, consider zoning lifts to separate sections (levels 5 to 22 and 23 to 34 as an example), provide priority access for two-per-floor and whole-floor residences, and add resident storage that is currently absent from the core.",hl:{x:250,y:150,w:60,h:60,label:"6 LIFTS"}},
+  t2parking:{t:"Tower 2 · three-car allocation",note:"<strong>Recommended:</strong> target three secure car spaces wherever practical across the premium owner-occupier product. Parking is among the most common prestige objections.",hl:{x:60,y:54,w:180,h:252,label:"3 SPACES"}}
+};
+
+function openPlan(key){
+  const p=PLANS[key];if(!p)return;
+  modalTitle.textContent=p.t.replace(/&amp;/g,'&');
+  modalNote.innerHTML=p.note;
+  planFigure.innerHTML=plate(p.hl,p.t);
+  modal.classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closePlan(){modal.classList.remove('open');document.body.style.overflow=''}
+document.querySelectorAll('.plan-btn').forEach(b=>{
+  b.addEventListener('click',()=>openPlan(b.dataset.plan));
+});
+document.getElementById('modalX').addEventListener('click',closePlan);
+modal.addEventListener('click',e=>{if(e.target===modal)closePlan()});
+addEventListener('keydown',e=>{if(e.key==='Escape'){closePlan();closeNav()}});
+</script>
+</body>
+</html>
