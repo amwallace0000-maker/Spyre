@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Spyre Main Beach · Kollosche × Place Brisbane</title>
+<title>Spyre · 3640–3642 Main Beach Parade · Kollosche × Place Brisbane</title>
 <!--
   DEPLOYMENT NOTE
   This standalone build uses 'Söhne Breit' as the primary display family.
@@ -159,6 +159,7 @@
   .hero-eyebrow{margin-bottom:34px}
   .hero h1{font-size:clamp(2.8rem,9vw,7.2rem);line-height:.96;letter-spacing:-.02em}
   .hero h1 .thin{color:var(--light-dim)}
+  .hero h1 .addr{display:block;font-size:max(1.05rem,.3em);line-height:1.16;letter-spacing:.01em;margin-top:.42em}
   .hero-sub{font-family:var(--display);font-size:clamp(1rem,2.4vw,1.6rem);color:var(--gold);
     margin-top:26px;letter-spacing:.02em}
   .hero-thesis{margin-top:34px;font-size:clamp(1rem,1.5vw,1.18rem);color:var(--light);max-width:52ch;line-height:1.55}
@@ -347,6 +348,125 @@
   .doc-link:hover .dt{color:var(--gold)}
   .doc-link .arw{color:var(--accent);flex:none;transition:color .25s var(--ease)}
   .doc-link:hover .arw{color:var(--gold)}
+
+  /* ================= PRINT · A4 LANDSCAPE ================= */
+  @media print{
+    @page{ size:A4 landscape; margin:0; }
+
+    html,body{
+      background:var(--navy) !important;
+      width:297mm;
+      font-size:9pt;
+      line-height:1.45;
+      -webkit-print-color-adjust:exact;
+      print-color-adjust:exact;
+      overflow:visible;
+    }
+    *{ -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+
+    /* screen-only furniture */
+    .topbar,.subnav,.progress,.nav-overlay,.scrollcue,.modal,.plan-btn{ display:none !important; }
+
+    /* reveal animations must not print blank */
+    .reveal,.reveal.in{ opacity:1 !important; transform:none !important; transition:none !important; }
+
+    /* one section per page */
+    section{
+      break-before:page; page-break-before:always;
+      padding:10mm 14mm 9mm;
+      display:block;
+    }
+    section#s1{ break-before:auto; page-break-before:auto; }
+    .wrap{ max-width:none; }
+
+    /* hero fills its page */
+    .hero{ min-height:210mm; height:210mm; padding:0 15mm; display:flex; }
+    .hero::before{ background-position:52% 40%; }
+    .hero h1{ font-size:44pt; }
+    .hero-sub{ font-size:14pt; }
+    .hero-thesis{ font-size:10.5pt; max-width:64ch; }
+    .hero-stats{ margin-top:9mm; padding-top:5mm; gap:14mm; }
+    .stat .n{ font-size:16pt; }
+    .stat .l{ font-size:6.6pt; }
+
+    /* full-bleed band is its own plate */
+    .fullbleed{ min-height:210mm; height:210mm; padding:0; }
+    .fullbleed .fb-content{ padding:16mm 15mm; }
+
+    h2{ font-size:19pt; }
+    h3{ font-size:11pt; }
+    .sec-index{ font-size:7pt; margin-bottom:9px; }
+    .eyebrow{ font-size:6.8pt; }
+    .lede{ font-size:10pt; max-width:74ch; }
+    p{ max-width:78ch; }
+    .sec-head{ margin-bottom:5mm; max-width:none; }
+
+    /* never guillotine a card mid-way */
+    .blk,.rec,.metric,.step,.case,.col,.agent-card,.band-viz,.doc-link,tr{
+      break-inside:avoid; page-break-inside:avoid;
+    }
+    h2,h3{ break-after:avoid; page-break-after:avoid; }
+    section h3[style]{ margin-top:8mm !important; margin-bottom:3mm !important; }
+    /* inline margin-top values (18-36px) are set for screen rhythm; tighten for paper */
+    section p[style*="margin-top"]{ margin-top:3.5mm !important; }
+    section .split[style],section .block-grid[style],section .metric-row[style],
+    section .steps[style],section .rec-grid[style],section table[style]{ margin-top:3.5mm !important; }
+    .doc-panel{ margin-top:6mm; }
+    .band-viz{ margin-top:5mm !important; }
+    /* these three sections sit just over a page boundary; pull them back rather
+       than let a closing paragraph strand itself on a near-empty sheet */
+    #s9,#s12,#s19{ padding-top:7mm; padding-bottom:5mm; }
+    #s9 .blk,#s12 .blk,#s12 .step,#s19 .metric,#s19 .col{ padding:3.4mm 4mm; }
+    #s9 .band-viz{ margin-top:3mm !important; padding:4mm; }
+    #s9 .band-viz p{ font-size:8pt; }
+    #s12 .steps,#s12 .block-grid{ margin-top:2.5mm !important; }
+    #s12 .step p,#s12 .blk p{ font-size:7.9pt; }
+    #s12 p[style*="margin-top"]{ margin-top:3mm !important; }
+    #s19 table.data th,#s19 table.data td{ padding:7px 12px; }
+    table.data{ break-inside:auto; }
+    thead{ display:table-header-group; }
+
+    /* grids: landscape A4 comfortably carries three across */
+    .block-grid,.rec-grid{ grid-template-columns:repeat(3,1fr) !important; }
+    .steps{ grid-template-columns:repeat(4,1fr) !important; }
+    .metric-row{ grid-template-columns:repeat(3,1fr) !important; }
+    .rec{ min-height:0; }
+    .blk,.rec,.step,.metric{ padding:4.5mm 5mm; }
+    .blk p,.rec p,.step p{ font-size:8.2pt; }
+    .metric .n{ font-size:15pt; }
+
+    .core{ min-height:210mm; display:flex; align-items:center; }
+    .core blockquote{ font-size:20pt; }
+
+    footer{ break-before:auto; page-break-before:auto; padding:10mm 15mm; }
+
+    /* dropbox links: show the destination, print is not clickable on paper */
+    .doc-link .ds::after{
+      content:" · " attr(data-url);
+      color:var(--accent); font-size:7pt; word-break:break-all;
+    }
+
+    /* ---- plan appendix (screen-hidden, print-only) ---- */
+    #printPlans{ display:block !important; }
+    #printPlans .pp-page{
+      break-before:page; page-break-before:always;
+      break-inside:avoid; page-break-inside:avoid;
+      padding:10mm 14mm;
+      display:flex; flex-direction:column;
+    }
+    #printPlans .pp-grid{
+      display:grid; grid-template-columns:1.15fr 1fr; gap:10mm; align-items:start; margin-top:6mm;
+    }
+    #printPlans .pp-fig{ border:1px solid var(--line); background:var(--dark); padding:6mm; }
+    #printPlans .pp-fig svg{ width:100%; height:auto; display:block; }
+    #printPlans .pp-note{ font-size:9pt; color:var(--light-dim); }
+    #printPlans .pp-note strong{ color:var(--gold); }
+    #printPlans .pp-ref{ font-family:var(--display); font-size:7pt; letter-spacing:.16em;
+      text-transform:uppercase; color:var(--accent); margin-top:6mm;
+      border-top:1px solid var(--line); padding-top:4mm; }
+  }
+  #printPlans{ display:none; }
+
   /* ---------- Team headshots ---------- */
   .agent-photo{overflow:hidden;padding:0;background:var(--mid)}
   .agent-photo img{width:100%;height:100%;object-fit:cover;object-position:50% 18%;display:block}
@@ -377,7 +497,7 @@
 <section class="hero" id="s1">
   <div class="wrap">
     <div class="eyebrow hero-eyebrow">Kollosche × Place Brisbane</div>
-    <h1>Spyre<br><span class="thin">Main Beach</span></h1>
+    <h1>Spyre<br><span class="thin addr">3640–3642 Main Beach Parade</span></h1>
     <div class="hero-sub">Strategic Sales, Product &amp; Commercial Review</div>
     <p class="hero-thesis">Two towers, one objective: not how many apartments can be built, but how much long-term value can be created. This review shows where.</p>
     <div class="hero-stats">
@@ -396,10 +516,10 @@
     <div class="sec-head">
       <div class="eyebrow">Executive Summary</div>
       <h2>Value, not volume.</h2>
-      <p class="lede">Spyre has all the foundations required to become one of Main Beach's defining residential developments. The upside now lies in refining the product before launch.</p>
+      <p class="lede">The development has all the foundations required to become one of Main Beach's defining residential addresses. The upside now lies in refining the product before launch.</p>
     </div>
     <p>This submission has been prepared following a comprehensive review of the proposed development, including the concept plans, apartment configurations, pricing assumptions and supporting project information. Our objective extends beyond providing a project marketing proposal. We have approached this opportunity as a strategic development partner, identifying opportunities to further strengthen the product before launch to maximise buyer appeal, livability, pricing integrity and overall gross realisation.</p>
-    <p style="margin-top:18px">Capitalising on protected views east to the beach and north up the Broadwater, Spyre's architectural presence, scale and timing within an evolving luxury market provide an exceptional platform for success. We also believe there are several opportunities to further refine the product, ensuring the development aligns with the evolving expectations of today's apartment buyer while targeting the strongest areas of owner-occupier demand.</p>
+    <p style="margin-top:18px">Capitalising on protected views east to the beach and north up the Broadwater, the development's architectural presence, scale and timing within an evolving luxury market provide an exceptional platform for success. We also believe there are several opportunities to further refine the product, ensuring the development aligns with the evolving expectations of today's apartment buyer while targeting the strongest areas of owner-occupier demand.</p>
     <div class="metric-row" style="margin-top:32px">
       <div class="metric"><div class="n">40%</div><div class="l">Pre-sale target</div><div class="sub">Trigger for funding</div></div>
       <div class="metric"><div class="n">July 2027</div><div class="l">By this date</div><div class="sub">Program-critical</div></div>
@@ -444,15 +564,15 @@
       <div class="blk"><span class="tag">Positioning</span><h3>Prestigious Main Beach</h3><p>One of Australia's most tightly held beachside suburbs, currently experiencing a significant transformation through developments including Marina Mirage, Mantaray, Village East and the continued revitalisation of The Spit precinct.</p></div><div class="blk"><span class="tag">Supply</span><h3>Limited competing supply</h3><p>Opportunities to secure new luxury beachside residences within Main Beach remain extremely limited, supporting long-term pricing and scarcity, with most available supply priced between $7M and $30M.</p></div><div class="blk"><span class="tag">Demand</span><h3>Owner-occupier appeal</h3><p>Apartment sizes, location and lifestyle position the project strongly for downsizers seeking premium, low-maintenance living, with all the retail and dining amenity that supports the Main Beach lifestyle they are seeking.</p></div><div class="blk"><span class="tag">Lifestyle</span><h3>World-class lifestyle</h3><p>Proximity to the beach, Federation Walk, Marina Mirage, Southport Yacht Club, Tedder Avenue and the Broadwater creates one of the Gold Coast's most complete lifestyle offerings.</p></div><div class="blk"><span class="tag">Timing</span><h3>The right point in the cycle</h3><p>The project enters the market during a period of continued population growth, increasing interstate migration and sustained demand for apartment living within this precinct.</p></div>
     </div>
     <h3 style="margin:44px 0 6px">The investment pipeline</h3>
-    <p style="margin-top:8px">An unprecedented pipeline of private and public investment is reshaping the precinct. Spyre enters at exactly the right point: positioned to benefit from demand the broader precinct is already creating.</p>
+    <p style="margin-top:8px">An unprecedented pipeline of private and public investment is reshaping the precinct. The development enters at exactly the right point: positioned to benefit from demand the broader precinct is already creating.</p>
     <div class="block-grid" style="margin-top:14px">
       <div class="blk"><span class="tag">Hospitality</span><h3>Marina Mirage</h3><p>World-class mixed-use waterfront: a 126-key Luxury Collection by Marriott hotel, 38 ultra-premium residences, fine dining, luxury retail and marina.</p></div><div class="blk"><span class="tag">Hospitality</span><h3>The Ritz-Carlton</h3><p>Redevelopment at Mariners Cove, introducing a globally recognised luxury hospitality brand to Main Beach.</p></div><div class="blk"><span class="tag">Marine</span><h3>Mantaray Marina &amp; Residences</h3><p>An exclusive waterfront residential and superyacht precinct.</p></div><div class="blk"><span class="tag">Residential</span><h3>The Isles</h3><p>Waterfront residences adding to the precinct's premium supply.</p></div><div class="blk"><span class="tag">Marine</span><h3>Carter's Basin</h3><p>Marine precinct redevelopment strengthening the broader marine offering.</p></div><div class="blk"><span class="tag">Resort</span><h3>Village East</h3><p>Resort development at The Spit.</p></div><div class="blk"><span class="tag">Hospitality</span><h3>Sheraton Grand Mirage &amp; Hilton LXR</h3><p>Significant reinvestment into two established luxury resorts.</p></div>
     </div>
-    <p style="margin-top:24px">Collectively these represent billions of dollars of investment that will permanently elevate Main Beach as one of Australia's premier luxury coastal destinations. Spyre becomes part of that story, not because it follows the transformation, but because it helps define it.</p>
+    <p style="margin-top:24px">Collectively these represent billions of dollars of investment that will permanently elevate Main Beach as one of Australia's premier luxury coastal destinations. The development becomes part of that story, not because it follows the transformation, but because it helps define it.</p>
     <h3 style="margin:44px 0 6px">Key demand drivers</h3>
     <p style="margin-top:8px">Unlike traditional apartment developments, purchasing decisions at this level are driven by lifestyle, exclusivity and long-term value rather than necessity. Buyers are seeking a product that delivers convenience, security, wellness and exceptional design, supported by a location with enduring appeal.</p>
     <div class="block-grid" style="margin-top:14px">
-      <div class="blk"><span class="tag">Scarcity</span><h3>Limited future supply</h3><p>Opportunities to acquire new luxury beachside residences within Main Beach remain extremely limited. This scarcity will continue to support buyer demand, pricing resilience and long-term capital growth.</p></div><div class="blk"><span class="tag">Migration</span><h3>Lifestyle migration</h3><p>The Gold Coast continues to attract affluent purchasers relocating from Sydney, Melbourne and Brisbane, together with established Gold Coast residents transitioning from waterfront and suburban homes into premium apartment living. Main Beach benefits from this shift through its established amenity, walkability and premium coastal lifestyle.</p></div><div class="blk"><span class="tag">Amenity</span><h3>Wellness &amp; lifestyle</h3><p>Buyers increasingly prioritise developments that deliver more than exceptional residences. Premium wellness facilities, concierge services, resident lounges, private entertaining spaces, generous car parking ratios and hospitality-inspired amenities have become significant purchasing considerations.</p></div><div class="blk"><span class="tag">Capacity</span><h3>Owner-occupier appeal</h3><p>This buyer profile typically demonstrates stronger purchasing capacity, reduced sensitivity to market fluctuations and greater willingness to pay premium rates for exceptional product, provided the purchasing requirements of the target market are delivered.</p></div><div class="blk"><span class="tag">Difference</span><h3>Product differentiation</h3><p>Through thoughtful design refinement, premium resident amenity and a clear product hierarchy, Spyre has the opportunity to distinguish itself from competing developments and establish a benchmark for luxury apartment living within Main Beach.</p></div>
+      <div class="blk"><span class="tag">Scarcity</span><h3>Limited future supply</h3><p>Opportunities to acquire new luxury beachside residences within Main Beach remain extremely limited. This scarcity will continue to support buyer demand, pricing resilience and long-term capital growth.</p></div><div class="blk"><span class="tag">Migration</span><h3>Lifestyle migration</h3><p>The Gold Coast continues to attract affluent purchasers relocating from Sydney, Melbourne and Brisbane, together with established Gold Coast residents transitioning from waterfront and suburban homes into premium apartment living. Main Beach benefits from this shift through its established amenity, walkability and premium coastal lifestyle.</p></div><div class="blk"><span class="tag">Amenity</span><h3>Wellness &amp; lifestyle</h3><p>Buyers increasingly prioritise developments that deliver more than exceptional residences. Premium wellness facilities, concierge services, resident lounges, private entertaining spaces, generous car parking ratios and hospitality-inspired amenities have become significant purchasing considerations.</p></div><div class="blk"><span class="tag">Capacity</span><h3>Owner-occupier appeal</h3><p>This buyer profile typically demonstrates stronger purchasing capacity, reduced sensitivity to market fluctuations and greater willingness to pay premium rates for exceptional product, provided the purchasing requirements of the target market are delivered.</p></div><div class="blk"><span class="tag">Difference</span><h3>Product differentiation</h3><p>Through thoughtful design refinement, premium resident amenity and a clear product hierarchy, the development has the opportunity to distinguish itself from competing developments and establish a benchmark for luxury apartment living within Main Beach.</p></div>
     </div>
   </div>
 </section>
@@ -464,7 +584,7 @@
   <div class="fb-content reveal">
     <div class="eyebrow">Main Beach · Gold Coast</div>
     <h2>Between the Broadwater and the ocean.</h2>
-    <p>The Broadwater and the marina on one side, open surf on the other. Spyre sits on the rare stretch where both are the outlook, and that dual aspect is what the campaign leads with before a single price is quoted.</p>
+    <p>The Broadwater and the marina on one side, open surf on the other. The development sits on the rare stretch where both are the outlook, and that dual aspect is what the campaign leads with before a single price is quoted.</p>
   </div>
 </section>
 
@@ -485,9 +605,9 @@
     </div>
     <h3 style="margin:44px 0 6px">Key strategic recommendations</h3>
     <div class="block-grid" style="margin-top:14px">
-      <div class="blk"><span class="tag">One</span><h3>Elevate amenity &amp; wellness</h3><p>Expand resident amenity in the East Tower to establish Spyre as a leading wellness-focused development, lifting desirability and pricing across the project.</p></div><div class="blk"><span class="tag">Two</span><h3>Strengthen owner-occupier appeal</h3><p>Target the segment with the strongest purchasing capacity and the lowest sensitivity to market movement, and design specifically for how they intend to live.</p></div><div class="blk"><span class="tag">Three</span><h3>Improve livability</h3><p>Reduce density where it counts, lift servicing, and remove the day-to-day friction that prestige buyers notice immediately and price accordingly.</p></div><div class="blk"><span class="tag">Four</span><h3>Create a progressive hierarchy</h3><p>Establish a clear progression from Standard to Premium, Sky, Sub-Penthouse and Signature Penthouse so buyers immediately recognise the step up.</p></div><div class="blk"><span class="tag">Five</span><h3>Functionality &amp; premium view utilisation</h3><p>Consistently orient living, dining and entertaining toward the strongest outlook. Reserve premium view corridors for the highest-value product.</p></div><div class="blk"><span class="tag">Six</span><h3>Refine pricing architecture</h3><p>Price each residence to its individual attributes rather than uniformly, so rates rise naturally as the product improves through the building.</p></div><div class="blk"><span class="tag">Seven</span><h3>Disciplined, controlled sell-down</h3><p>Release to demand rather than construction milestones, maintaining scarcity and allowing later releases to benefit from established sales evidence.</p></div><div class="blk"><span class="tag">Eight</span><h3>Leverage combined relationships</h3><p>Engage the combined buyer networks of Kollosche and Place well before the broader public campaign commences.</p></div>
+      <div class="blk"><span class="tag">One</span><h3>Elevate amenity &amp; wellness</h3><p>Expand resident amenity in the East Tower to establish the development as a leading wellness-focused address, lifting desirability and pricing across the project.</p></div><div class="blk"><span class="tag">Two</span><h3>Strengthen owner-occupier appeal</h3><p>Target the segment with the strongest purchasing capacity and the lowest sensitivity to market movement, and design specifically for how they intend to live.</p></div><div class="blk"><span class="tag">Three</span><h3>Improve livability</h3><p>Reduce density where it counts, lift servicing, and remove the day-to-day friction that prestige buyers notice immediately and price accordingly.</p></div><div class="blk"><span class="tag">Four</span><h3>Create a progressive hierarchy</h3><p>Establish a clear progression from Standard to Premium, Sky, Sub-Penthouse and Signature Penthouse so buyers immediately recognise the step up.</p></div><div class="blk"><span class="tag">Five</span><h3>Functionality &amp; premium view utilisation</h3><p>Consistently orient living, dining and entertaining toward the strongest outlook. Reserve premium view corridors for the highest-value product.</p></div><div class="blk"><span class="tag">Six</span><h3>Refine pricing architecture</h3><p>Price each residence to its individual attributes rather than uniformly, so rates rise naturally as the product improves through the building.</p></div><div class="blk"><span class="tag">Seven</span><h3>Disciplined, controlled sell-down</h3><p>Release to demand rather than construction milestones, maintaining scarcity and allowing later releases to benefit from established sales evidence.</p></div><div class="blk"><span class="tag">Eight</span><h3>Leverage combined relationships</h3><p>Engage the combined buyer networks of Kollosche and Place well before the broader public campaign commences.</p></div>
     </div>
-    <p style="margin-top:26px;font-family:var(--display);color:var(--light);font-size:1.05rem">The greatest opportunity for Spyre is not to maximise apartment numbers. It is to maximise desirability, and in turn yield.</p>
+    <p style="margin-top:26px;font-family:var(--display);color:var(--light);font-size:1.05rem">The greatest opportunity for the development is not to maximise apartment numbers. It is to maximise desirability, and in turn yield.</p>
   </div>
 </section>
 
@@ -655,7 +775,7 @@
     <div class="sec-head">
       <div class="eyebrow">A Clear Ladder</div>
       <h2>Five tiers, clearly separated.</h2>
-      <p class="lede">Many developments create internal competition by offering apartments that differ only marginally. Spyre should make the step between levels unmistakable.</p>
+      <p class="lede">Many developments create internal competition by offering apartments that differ only marginally. The development should make the step between levels unmistakable.</p>
     </div>
     <div class="block-grid" style="margin-top:8px"><div class="blk"><span class="tag">Tier 01</span><h3>Standard Residences</h3><p>Premium finishes, excellent functionality, exceptional value. The foundation product for owner-occupiers and second-home buyers.</p></div><div class="blk"><span class="tag">Tier 02</span><h3>Premium Residences</h3><p>Larger layouts, improved specifications and better outlooks. A clear step up, not an incremental one.</p></div><div class="blk"><span class="tag">Tier 03</span><h3>Sky Collection</h3><p>Where Tower 2 clears the East Tower. Larger residences, superior specification, broader ocean frontage and premium pricing.</p></div><div class="blk"><span class="tag">Tier 04</span><h3>Sub-Penthouses</h3><p>Bespoke interiors, higher ceilings, private lift lobbies, outdoor kitchens and wine storage. Limited release, premium positioning.</p></div><div class="blk"><span class="tag">Tier 05</span><h3>Signature Penthouses</h3><p>The project's ultimate statement, designed as landmark homes rather than apartments. Marketed independently, never treated as residual stock.</p></div></div><p style="margin-top:24px">This progression creates aspiration as purchasers move higher through the building, and allows rates per m² to increase naturally as product quality improves. Premium residences should also appreciate faster than standard product, widening the differential as supply reduces.</p>
   </div>
@@ -774,13 +894,13 @@
       <p class="lede">By the time the public launch occurs, many buyers should already have selected their preferred apartment and emotionally committed.</p>
     </div>
     <div class="steps">
-      <div class="step"><h3>Phase 1 · Positioning</h3><p>Establish the identity before apartments appear. Spyre should become synonymous with wellness, prestige, architecture, lifestyle, service, exclusivity and Main Beach.</p></div>
+      <div class="step"><h3>Phase 1 · Positioning</h3><p>Establish the identity before apartments appear. The development should become synonymous with wellness, prestige, architecture, lifestyle, service, exclusivity and Main Beach.</p></div>
       <div class="step"><h3>Phase 2 · Chairman's List</h3><p>Invitation-only access for existing relationships and VIP clients: private briefings, architect presentations, material selections and priority selection. Create emotional ownership early.</p></div>
       <div class="step"><h3>Phase 3 · Storytelling</h3><p>Prestige is bought emotionally, then justified financially. Lead with the story of Main Beach, wellness, architecture and marina lifestyle rather than floor plans.</p></div>
       <div class="step"><h3>Phase 4 · Public launch</h3><p>Only once demand is established. Reinforce scarcity, not availability: limited releases, private appointments, priority access. Encourage commitment, not browsing.</p></div>
     </div>
     <h3 style="margin:44px 0 6px">Marketing philosophy</h3>
-    <p style="margin-top:8px">Marketing should do more than showcase apartments. It should communicate the lifestyle, prestige and long-term value of owning within Spyre. Rather than focusing solely on finishes and floorplans, the campaign should position Spyre as one of Main Beach's defining residential addresses, appealing to buyers who are purchasing a lifestyle as much as a residence. Every interaction, from the interior experience centre through to digital presentation, private appointments and settlement, should reinforce this positioning.</p>
+    <p style="margin-top:8px">Marketing should do more than showcase apartments. It should communicate the lifestyle, prestige and long-term value of owning within the development. Rather than focusing solely on finishes and floorplans, the campaign should position the development as one of Main Beach's defining residential addresses, appealing to buyers who are purchasing a lifestyle as much as a residence. Every interaction, from the interior experience centre through to digital presentation, private appointments and settlement, should reinforce this positioning.</p>
     <div class="block-grid" style="margin-top:26px">
       <div class="blk"><span class="tag">Media</span><h3>Positioning-led</h3><p>Editorial, luxury and architectural publications, prestige property and business media, targeted digital, video storytelling and milestone PR.</p></div><div class="blk"><span class="tag">Content</span><h3>Timeless, educational</h3><p>Design philosophy, wellness, Main Beach, architecture, concierge and construction progress, sustaining engagement across a multi-year campaign.</p></div><div class="blk"><span class="tag">Events</span><h3>Relationship-deepening</h3><p>Chairman's dinners, wellness experiences, design evenings, marina experiences and private art exhibitions, each generating qualified referrals.</p></div><div class="blk"><span class="tag">Referral</span><h3>Ambassadors</h3><p>The most valuable buyers know one another. Encourage family, business and adviser introductions; referrals convert faster than cold enquiry.</p></div>
     </div>
@@ -795,7 +915,7 @@
       <h2>The display as an experience.</h2>
       <p class="lede">The objective is not to explain the apartments. It is to let purchasers imagine themselves already living there.</p>
     </div>
-    <p>The interior experience centre will play a critical role in establishing the project's first impression, building buyer confidence in product quality, and reinforcing Spyre's premium positioning. For many purchasers it represents their first physical interaction with the development, and should therefore reflect the quality, sophistication and lifestyle the project seeks to deliver. Rather than simply displaying finishes and floor plans, it should communicate the broader vision of the development, allowing buyers to fully appreciate the standard of design, amenity and lifestyle they are purchasing.</p>
+    <p>The interior experience centre will play a critical role in establishing the project's first impression, building buyer confidence in product quality, and reinforcing the development's premium positioning. For many purchasers it represents their first physical interaction with the development, and should therefore reflect the quality, sophistication and lifestyle the project seeks to deliver. Rather than simply displaying finishes and floor plans, it should communicate the broader vision of the development, allowing buyers to fully appreciate the standard of design, amenity and lifestyle they are purchasing.</p>
     <p style="margin-top:18px">It should feel closer to arriving at a private members' club or luxury hotel than a conventional project display. Rather than directing visitors straight to models and floor plans, the experience follows a deliberate sequence.</p>
     <div class="steps" style="margin-top:32px">
       <div class="step"><h3>Arrival</h3><p>A warm concierge welcome, refreshments and a comfortable, relaxed lounge.</p></div>
@@ -833,7 +953,7 @@
       <div class="col"><div class="tower-tag">Place</div><h3>Brisbane penetration.</h3>
         <p style="margin-top:6px">Unparalleled reach into the Brisbane prestige market, one of the project's most important buyer pools, and direct access to purchasers treating the Gold Coast as an extension of their lifestyle.</p></div>
     </div>
-    <p style="margin-top:28px">Together, the partnership delivers an exceptional combination of local market expertise, proven project marketing capability, and direct access to one of Australia's largest networks of qualified property buyers for this product and location. The advantage is access before advertising. Many future purchasers are not prospects waiting to discover Spyre; they are existing clients whose holdings, capacity and intentions are already understood. That means higher-quality conversations, faster conversion and reduced reliance on expensive lead generation.</p>
+    <p style="margin-top:28px">Together, the partnership delivers an exceptional combination of local market expertise, proven project marketing capability, and direct access to one of Australia's largest networks of qualified property buyers for this product and location. The advantage is access before advertising. Many future purchasers are not prospects waiting to discover the development; they are existing clients whose holdings, capacity and intentions are already understood. That means higher-quality conversations, faster conversion and reduced reliance on expensive lead generation.</p>
     <h3 style="margin:44px 0 6px">Our difference</h3>
     <div class="split" style="margin-top:14px">
       <div class="col east"><div class="tower-tag">Beyond the sale</div><h3>We would rather shape the market than respond to it.</h3>
@@ -1000,13 +1120,13 @@
 
 <section class="band fill-dark" id="s20">
   <div class="wrap reveal">
-    <div class="sec-index">20 / Why Spyre</div>
+    <div class="sec-index">20 / Why This Development</div>
     <div class="sec-head">
       <div class="eyebrow">Main Beach's Next Address</div>
-      <h2>Why Spyre.</h2>
+      <h2>Why this development.</h2>
       <p class="lede">Every successful development begins with a vision. The most successful begin with a vision that changes the market.</p>
     </div>
-    <p>Spyre's Main Beach development represents one of the most exciting residential opportunities currently emerging within the Gold Coast property market. Few sites combine this position, scale, architectural presence, surrounding investment, buyer depth and long-term growth. Large sites in Main Beach have become exceptionally scarce and are unlikely to be replicated often over the coming decades. The decisions made today will influence how Spyre is regarded twenty years from now.</p>
+    <p>Spyre's Main Beach development represents one of the most exciting residential opportunities currently emerging within the Gold Coast property market. Few sites combine this position, scale, architectural presence, surrounding investment, buyer depth and long-term growth. Large sites in Main Beach have become exceptionally scarce and are unlikely to be replicated often over the coming decades. The decisions made today will influence how the development is regarded twenty years from now.</p>
     <h3 style="margin:40px 0 6px">Summary of recommendations</h3>
     <table class="data" style="margin-top:14px">
       <thead><tr><th>Recommendation</th><th>Commercial benefit</th><th>Expected outcome</th></tr></thead>
@@ -1023,9 +1143,11 @@
   <div class="wrap reveal">
     <div class="eyebrow" style="margin-bottom:30px">The One Thing To Remember</div>
     <blockquote>Great developments are remembered for the buildings they create. Exceptional developments are remembered for the standards they <em>redefine</em>.</blockquote>
-    <p style="margin-top:34px;font-family:var(--display);color:var(--light);font-size:1.05rem;max-width:52ch">We believe Spyre has the opportunity to achieve both. Our role is to help make that happen.</p>
+    <p style="margin-top:34px;font-family:var(--display);color:var(--light);font-size:1.05rem;max-width:52ch">We believe the development has the opportunity to achieve both. Our role is to help make that happen.</p>
   </div>
 </section>
+
+<div id="printPlans" aria-hidden="true"></div>
 
 <footer>
   <div class="wm">Kollosche <span>×</span> Place Brisbane</div>
@@ -1052,7 +1174,7 @@
 <script>
 /* ---------- Section index data ---------- */
 const SECTIONS = [
-  ["01","Spyre Main Beach","s1"],
+  ["01","3640–3642 Main Beach Parade","s1"],
   ["02","The Opportunity","s2"],
   ["03","Main Beach · A New Era","s3"],
   ["04","Commercial Assessment","s4"],
@@ -1071,7 +1193,7 @@ const SECTIONS = [
   ["17","Project Delivery Strategy","s17"],
   ["18","Relevant Project Experience","s18"],
   ["19","Fee Proposal","s19"],
-  ["20","Why Spyre","s20"],
+  ["20","Why This Development","s20"],
   ["21","Core Message","s21"]
 ];
 const navGrid = document.getElementById('navGrid');
@@ -1084,7 +1206,7 @@ SECTIONS.forEach(([n,t,id])=>{
 });
 
 /* ---------- Anchor menu (top) ---------- */
-const SHORT=["Overview","Opportunity","Main Beach","Assessment","The Buyer","East Tower","Sky Collection","Hierarchy","Specification","Pricing","Sales","Launch","Experience Centre","Partnership","The Team","Reporting","Delivery","Experience","Fees","Why Spyre","Message"];
+const SHORT=["Overview","Opportunity","Main Beach","Assessment","The Buyer","East Tower","Sky Collection","Hierarchy","Specification","Pricing","Sales","Launch","Experience Centre","Partnership","The Team","Reporting","Delivery","Experience","Fees","The Case","Message"];
 const subTrack=document.getElementById('subnavTrack');
 const chips=[];
 SECTIONS.forEach(([n,t,id],i)=>{
@@ -1198,6 +1320,40 @@ function closePlan(){modal.classList.remove('open');document.body.style.overflow
 document.querySelectorAll('.plan-btn').forEach(b=>{
   b.addEventListener('click',()=>openPlan(b.dataset.plan));
 });
+
+/* ---------- Print: expose Dropbox URLs on the doc list ---------- */
+document.querySelectorAll('.doc-link').forEach(a=>{
+  const ds=a.querySelector('.ds');
+  if(ds) ds.setAttribute('data-url', a.getAttribute('href'));
+});
+
+/* ---------- Print: plan schematics live in modals, so mirror them into an appendix ---------- */
+(function buildPrintPlans(){
+  const host=document.getElementById('printPlans');
+  if(!host) return;
+  const order=['arrival','boardroom','wellness','parking','living','mix','sky','scarcity','specs','masters','t2lifts','t2parking'];
+  const label={arrival:'East Tower',boardroom:'East Tower',wellness:'East Tower',parking:'East Tower',
+               living:'Apartment design',mix:'Apartment design',sky:'Tower 2',scarcity:'Tower 2',
+               specs:'Tower 2',masters:'Tower 2',t2lifts:'Tower 2',t2parking:'Tower 2'};
+  let n=0;
+  order.forEach(k=>{
+    const p=PLANS[k]; if(!p) return;
+    n++;
+    const d=document.createElement('div');
+    d.className='pp-page';
+    d.innerHTML=
+      '<div class="sec-index">A'+String(n).padStart(2,'0')+' / Plan Appendix</div>'+
+      '<div class="eyebrow">'+(label[k]||'Design recommendation')+'</div>'+
+      '<h2 style="margin-top:10px">'+p.t.replace(/&amp;/g,'&')+'</h2>'+
+      '<div class="pp-grid">'+
+        '<div class="pp-fig">'+plate(p.hl,p.t)+'</div>'+
+        '<div><div class="pp-note">'+p.note+'</div>'+
+        '<div class="pp-ref">Indicative schematic</div></div>'+
+      '</div>';
+    host.appendChild(d);
+  });
+})();
+
 document.getElementById('modalX').addEventListener('click',closePlan);
 modal.addEventListener('click',e=>{if(e.target===modal)closePlan()});
 addEventListener('keydown',e=>{if(e.key==='Escape'){closePlan();closeNav()}});
